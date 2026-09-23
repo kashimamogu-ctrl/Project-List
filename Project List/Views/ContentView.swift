@@ -35,11 +35,11 @@ struct ContentView: View
             }
             .tag(1)
             
-            BrandView()
+            BrandListView()
                 .tabItem {
-                    Label("ブランド", systemImage: "tag")
+                    Image(systemName: "tag.fill")
+                    Text("ブランド")
                 }
-                .tag(2)
             
             MyPageView()
                 .tabItem {

@@ -203,7 +203,6 @@ struct ProjectDetailView: View
     }
     
     //TODO:この辺の関数ここに書かず別ファイルとかに移動させたいなあ
-    
     private func enterEditMode()
     {
         name = project.name
@@ -236,50 +235,76 @@ struct ProjectDetailView: View
         withAnimation { isEditMode = false }
     }
     
-    private func fetchOrCreateBrand(named name: String, genre: BrandGenre) -> Brand {
+    private func fetchOrCreateBrand(named name: String, genre: BrandGenre) -> Brand
+    {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let descriptor = FetchDescriptor<Brand>(predicate: #Predicate { $0.name == trimmedName })
         
-        if let existingBrand = try? modelContext.fetch(descriptor).first {
+        if let existingBrand = try? modelContext.fetch(descriptor).first
+        {
             existingBrand.genre = genre
             return existingBrand
-        } else {
+        }
+        else
+        {
             let newBrand = Brand(name: trimmedName, genre: genre.rawValue, note: "")
             modelContext.insert(newBrand)
             return newBrand
         }
     }
-    
-    //　共通UIコンポーネント群
-    private func editableSection<Content: View>(title: String, isRequired: Bool, @ViewBuilder content: () -> Content) -> some View
+}
+
+
+//TODO:この辺の関数ここに書かず別ファイルとかに移動させたいなあ
+//　共通UIコンポーネント群
+private func editableSection<Content: View>(title: String, isRequired: Bool, @ViewBuilder content: () -> Content) -> some View
+{
+    VStack(alignment: .leading, spacing: 6)
     {
-        VStack(alignment: .leading, spacing: 6)
+        HStack(spacing: 4) {
+            Text(title).font(.caption).foregroundColor(.gray)
+            if isRequired { Text("＊必須").font(.caption2).bold().foregroundColor(.red)
+            }
+        }
+        content()
+    }
+}
+
+private func dropdownLabel(text: String) -> some View
+{
+    HStack {Text(text).foregroundColor(.primary)
+        Spacer()
+        Image(systemName: "chevron.down").font(.footnote).foregroundColor(.gray)}.padding(8).background(Color(.systemBackground)).overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(.systemGray4), lineWidth: 0.5))
+}
+
+private func radioButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View
+{
+    Button(action: action)
+    {
+        HStack(spacing: 6)
         {
-            HStack(spacing: 4) {
-                Text(title).font(.caption).foregroundColor(.gray)
-                if isRequired { Text("＊必須").font(.caption2).bold().foregroundColor(.red)
+            ZStack
+            {
+                Circle().stroke(Color.gray, lineWidth: 1.5).frame(width: 18, height: 18)
+                
+                if isSelected
+                {
+                    Circle().fill(Color.secondary).frame(width: 10, height: 10)
                 }
             }
-            content()
+            Text(title).font(.body).foregroundColor(.primary)
         }
-    }
-    
-    private func dropdownLabel(text: String) -> some View {HStack {Text(text).foregroundColor(.primary)
-        Spacer()
-        Image(systemName: "chevron.down").font(.footnote).foregroundColor(.gray)}.padding(8).background(Color(.systemBackground)).overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(.systemGray4), lineWidth: 0.5))}
-    
-    private func radioButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {Button(action: action) {HStack(spacing: 6) {ZStack {Circle().stroke(Color.gray, lineWidth: 1.5).frame(width: 18, height: 18)
-        
-        if isSelected { Circle().fill(Color.secondary).frame(width: 10, height: 10) }}
-        Text(title).font(.body).foregroundColor(.primary)}}.buttonStyle(.plain)}}
+    }.buttonStyle(.plain)
+}
 
-    extension Date
+extension Date
+{
+    var localizedYMD: String
     {
-        var localizedYMD: String {
-            let formatter = DateFormatter()
-            // 端末の設定（日本なら日本、アメリカならアメリカ）の「年月日」スタイルを自動採用
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .none
-            return formatter.string(from: self)
+        let formatter = DateFormatter()
+        // 端末の設定（日本なら日本、アメリカならアメリカ）の「年月日」スタイルを自動採用
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: self)
     }
 }
