@@ -45,6 +45,7 @@ enum ProjectType: String, CaseIterable, Identifiable
 {
     case gifting = "ギフティング"
     case monitor = "モニター"
+    case ambassador = "アンバサダー"
     case other = "その他"
     
     var id: String { self.rawValue }
@@ -62,6 +63,8 @@ final class Project
     var statusRawValue: String       // 進捗（応募済 など）
     var typeRawValue: String  // 案件タイプ
     var hasDuty: Bool               // 投稿義務の有無
+    var isRange: Bool              //期限範囲
+    var startline: Date?            //始まりの期間
     var deadline: Date?             // 期限
     var note: String                // メモ
     
@@ -77,8 +80,21 @@ final class Project
         get { ProjectType(rawValue: typeRawValue) ?? .gifting }
         set { typeRawValue = newValue.rawValue }
     }
+    
+    // 期限の表示用テキストを返す計算プロパティ
+    var deadlineText: String? {
+        guard let deadline = deadline else { return nil }
+        
+        // 期間指定かつ開始日が存在する場合
+        if isRange, let startline = startline {
+            return "\(startline.localizedYMD) 〜 \(deadline.localizedYMD)"
+        } else {
+            // 単日の場合（例: 〜 2026/09/26）
+            return "〜 \(deadline.localizedYMD)"
+        }
+    }
 
-    init(name: String, brand: Brand? = nil, productName: String = "", status: ProjectStatus = .applied, projectType: ProjectType = .gifting, hasDuty: Bool = true, deadline: Date? = nil, note: String = "")
+    init(name: String, brand: Brand? = nil, productName: String = "", status: ProjectStatus = .applied, projectType: ProjectType = .gifting, hasDuty: Bool = true, isRange:Bool = false, startline: Date? = nil, deadline: Date? = nil,note: String = "")
     {
            self.name = name
            self.brand = brand
@@ -86,6 +102,8 @@ final class Project
            self.statusRawValue = status.rawValue
            self.typeRawValue = projectType.rawValue
            self.hasDuty = hasDuty
+           self.isRange = isRange
+           self.startline = startline
            self.deadline = deadline
            self.note = note
     }

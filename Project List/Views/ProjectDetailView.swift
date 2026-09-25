@@ -142,11 +142,10 @@ struct ProjectDetailView: View
                             Text(project.hasDuty ? "あり" : "なし")
                         }
                     }
-                    if let deadline = project.deadline
-                    {
+                    if let deadlineText = project.deadlineText {
                         LabeledContent("期限")
                         {
-                            Text(deadline, format: .dateTime.year().month().day())
+                            Text(deadlineText)
                         }
                     }
                 }

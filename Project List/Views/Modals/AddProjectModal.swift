@@ -4,12 +4,17 @@
 //
 //  案件リスト画面の案件の新規追加用モーダルのポップアップ
 
+
 import SwiftUI
 import SwiftData
+import os
+
+private let logger = Logger(subsystem: "com.example.app", category: "AddProject")
 
 struct AddProjectView: View
 {
     @Environment(\.modelContext) private var modelContext
+    
     @Binding var isPresented: Bool//他の場所からもモーダルが開く状態をいじれるようにしておく
     
     // フォームの入力状態を管理するState
@@ -20,6 +25,8 @@ struct AddProjectView: View
     @State private var selectedStatus: ProjectStatus = .applied   // 初期値：応募済
     @State private var selectedType: ProjectType = .gifting       // 初期値：ギフティング
     @State private var hasDuty: Bool = false
+    @State private var isRange = false
+    @State private var startline: Date = Date()
     @State private var deadline: Date = Date()
     @State private var note: String = ""
     
@@ -33,7 +40,6 @@ struct AddProjectView: View
     {
         VStack(spacing: 0)
         {
-           
             ZStack
             {//画面上部の表示
                 Text("新規案件作成")
@@ -158,11 +164,36 @@ struct AddProjectView: View
                     }
                     
                     // 期限(日付型)
-                    inputSection(title: "期限", isRequired: false)
+                    Section(header: Text("案件期限"))
                     {
-                        DatePicker("", selection: $deadline, displayedComponents: .date)
-                            .labelsHidden()
-                            .datePickerStyle(.compact)
+                        // 期間指定のチェックボックス / トグル
+                        Toggle("期間で指定する", isOn: $isRange)
+                            .onChange(of: isRange) { oldValue, newValue in
+                                // 期間指定がONになった際、開始日が終了日より後なら補正
+                                if newValue && startline > deadline {startline = deadline }
+                            }
+                        
+                        if isRange
+                        {
+                            // 期間指定が有効な場合：開始日 ＆ 終了日
+                            DatePicker("開始日", selection: $startline, displayedComponents: .date)
+                                .environment(\.locale, Locale(identifier: "ja_JP")) // 日本語表記対応
+                                .onChange(of: startline) { _, newValue in
+                                    handleStartDateChange(newDate: newValue)
+                                }
+                            
+                            DatePicker("終了日", selection: $deadline, displayedComponents: .date)
+                                .environment(\.locale, Locale(identifier: "ja_JP")) // 日本語表記対応
+                                .onChange(of: deadline) { _, newValue in
+                                    handleDeadlineChange(newDate: newValue)
+                                }
+                        }
+                        else
+                        {
+                            // 単日の場合：終了日（deadline）のみ表示
+                            DatePicker("期日", selection: $deadline, displayedComponents: .date)
+                                .environment(\.locale, Locale(identifier: "ja_JP")) // 日本語表記対応
+                        }
                     }
                     
                     inputSection(title: "メモ", isRequired: false)
@@ -265,12 +296,16 @@ struct AddProjectView: View
             status: selectedStatus,
             projectType: selectedType,
             hasDuty: hasDuty,
+            isRange: isRange,
+            startline: startline,
             deadline: deadline,
             note: note
         )
         
         modelContext.insert(newProject)
         isPresented = false
+        
+        logger.info("作成ボタンが押されました！")//LOG:データ変更による作成ができなくなることがないかチェックするため
     }
     
     private func fetchOrCreateBrand(named name: String, genre: BrandGenre) -> Brand
@@ -292,6 +327,25 @@ struct AddProjectView: View
             )
             modelContext.insert(newBrand)
             return newBrand
+        }
+    }
+    
+    // CHECK: この２つの関数統合できそう？
+    // 開始日が変更された時の自動チェック
+    private func handleStartDateChange(newDate: Date)
+    {
+        if isRange && newDate > deadline
+        {
+            // 開始日が終了日より後になった場合、終了日を開始日と同じにする（または自動入れ替え）
+            deadline = newDate
+        }
+    }
+    // 終了日が変更された時の自動チェック
+    private func handleDeadlineChange(newDate: Date)
+    {
+        if isRange && newDate < startline {
+            // 終了日が開開始日より前になった場合、開始日を終了日と同じにする（または自動入れ替え）
+            startline = newDate
         }
     }
 }

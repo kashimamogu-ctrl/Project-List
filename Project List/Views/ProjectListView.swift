@@ -105,7 +105,7 @@ struct ProjectListView: View
                                                 selectedProjectIDs.insert(project.id)
                                             }
                                         })
-                                        {//TODO:多分ここのかっこいらない
+                                        {
                                             Image(systemName: selectedProjectIDs.contains(project.id) ? "checkmark.circle.fill" : "circle")
                                                 .font(.title2)
                                                 .foregroundColor(selectedProjectIDs.contains(project.id) ? .red : .gray)
@@ -153,19 +153,17 @@ struct ProjectListView: View
                                                 .foregroundColor(.secondary)
                                                 .padding(.top, 4)
                                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                            
-                                            //期限表示
-                                            if let deadline = project.deadline
-                                            {
-                                                HStack {
-                                                    Spacer()
-                                                    Text(deadline.localizedYMD)
-                                                        .font(.caption2)
-                                                        .foregroundColor(.gray)
-                                                }
-                                                .padding(.top, 4)
+                                        }
+                                        
+                                        //期限表示
+                                        if let deadlineText = project.deadlineText {
+                                            HStack {
+                                                Spacer()
+                                                Text(deadlineText)
+                                                    .font(.caption2)
+                                                    .foregroundColor(.gray)
                                             }
-
+                                            .padding(.top, 4)
                                         }
                                     }
                                 }
@@ -299,6 +297,8 @@ struct ProjectListView: View
         status: .applied, // 応募済
         projectType: .gifting,
         hasDuty: true,
+        isRange: false,
+        startline: Date(),
         deadline: Date(),
         note: ""
     )
@@ -310,6 +310,8 @@ struct ProjectListView: View
         status: .applied, // 選考中など（お手持ちのEnumに合わせてください）
         projectType: .gifting,
         hasDuty: false,
+        isRange: false,
+        startline: Date(),
         deadline: Date().addingTimeInterval(86400 * 3), // 3日後
         note: ""
     )
