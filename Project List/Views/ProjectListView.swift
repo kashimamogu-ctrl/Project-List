@@ -4,6 +4,7 @@
 //
 //  Created by 菓子間もぐ　on 2026/09/23.
 //
+//TODO: 絞り込み機能は最初「全て」「未完了のみ」「期限超過」の３つにする
 
 import SwiftUI
 import SwiftData
@@ -77,8 +78,7 @@ struct ProjectListView: View
                     
                     VStack(spacing: 16)
                     {
-                        ForEach(filteredProjects) { project in
-                            
+                        ForEach(filteredProjects){ project in
                             ZStack
                             {
                                 // 1. 【最奥】通常モード時のみ、裏側に透明なボタンとしてNavigationLinkを配置

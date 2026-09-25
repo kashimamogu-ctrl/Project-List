@@ -4,14 +4,12 @@
 //
 //  案件リスト画面の案件の新規追加用モーダルのポップアップ
 
-
 import SwiftUI
 import SwiftData
 
 struct AddProjectView: View
 {
     @Environment(\.modelContext) private var modelContext
-    
     @Binding var isPresented: Bool//他の場所からもモーダルが開く状態をいじれるようにしておく
     
     // フォームの入力状態を管理するState
