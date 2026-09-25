@@ -179,7 +179,6 @@ struct ProjectListView: View
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
                 }
-                .background(Color(.systemGray6))
                 
                 // 左下の選択削除と右下の＋、ゴミ箱ボタン
                 VStack

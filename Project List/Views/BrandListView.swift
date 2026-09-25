@@ -86,7 +86,6 @@ struct BrandListView: View
                 .padding(.top, 16)
                 .frame(maxWidth: .infinity)
             }
-            .background(Color(.systemGray6))
             .navigationTitle("ブランド一覧")
             .navigationDestination(for: Brand.self) { selectedBrand in
                 BrandProjectListView(brand: selectedBrand)
