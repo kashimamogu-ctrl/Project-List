@@ -34,17 +34,38 @@ struct CalendarView: View
     
     // 開始曜日の設定（1 = 日曜日, 2 = 月曜日）
     @AppStorage("firstWeekday") private var firstWeekday = 2 // 「１」なら日曜始まり
+
+    private static let daysInWeek = 7 // 1週間の日数
+    private static let calendarRowCount = 6 // カレンダーの行数
+    private let totalCalendarGridCount = daysInWeek * calendarRowCount
     
     // 曜日の一覧
-    private var weekdays: [String] {
+    private var weekdays: [String]
+    {
         let base = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
         let shift = firstWeekday - 1
         return Array(base[shift...] + base[..<shift])
     }
     
-    private static let daysInWeek = 7 // 1週間の日数
-    private static let calendarRowCount = 6 // カレンダーの行数
-    private let totalCalendarGridCount = daysInWeek * calendarRowCount
+    // 7列の固定グリッド
+    private var columns: [GridItem]
+    {
+        Array(repeating: GridItem(.flexible(), spacing: 0), count: Self.daysInWeek)
+    }
+    
+    // 特定の日付に該当するプロジェクトとバー位置を取得
+    private func projectSegments(for date: Date) -> [CalendarProjectSegment]
+    {
+        return projects.compactMap { project in
+            guard let position = project.barPosition(for: date) else { return nil }
+            return CalendarProjectSegment(
+                id: project.id.hashValue.description,
+                name: project.name,
+                status: project.status,
+                position: position
+            )
+        }
+    }
     
     var body: some View
     {
@@ -85,9 +106,8 @@ struct CalendarView: View
                 // カレンダー本体
                 VStack(spacing: 0)
                 {
-                    // 曜日表示
-                    HStack(spacing: 0)
-                    {
+                    // 曜日表示ヘッダー
+                    HStack(spacing: 0) {
                         ForEach(weekdays, id: \.self) { weekday in
                             Text(weekday)
                                 .font(.caption).bold()
@@ -99,48 +119,21 @@ struct CalendarView: View
                     
                     Divider()
                     
-                    // 7列の固定グリッド
-                    let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: Self.daysInWeek)
-                    
-                    LazyVGrid(columns: columns, spacing: 0)
-                    {
-                            ForEach(calendarDays) { item in
-                                // その日の締め切り案件を取得
-                                let dayProjects = projects(for: item.date)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    // 日付の数字
-                                    Text("\(item.dayNumber)")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(item.isCurrentMonth ? .primary : .gray.opacity(0.5))
-                                        .padding([.top, .leading], 4)
-                                    
-                                    // タスクバッジ表示
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        ForEach(dayProjects.prefix(2)) { project in
-                                            Text(project.name)
-                                                .font(.system(size: 11, weight: .bold)) // 画像風の太字
-                                                .foregroundColor(.black.opacity(0.85))
-                                                .lineLimit(1)                         // 1行で収める（長ければ...表示）
-                                                .padding(.horizontal, 5)
-                                                .padding(.vertical, 3)
-                                                .background(Color(.systemGray5))
-                                                .cornerRadius(4)
-                                        }
-                                    }
-                                    .padding(.horizontal, 3)
-                                    
-                                    Spacer(minLength: 0)
-                                }
-                                .frame(maxWidth: .infinity, minHeight: 75, alignment: .topLeading)
-                                .background(tileBackgroundColor(for: item))
-                                .border(Color.gray.opacity(0.25), width: 0.5)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
+                    // 7列グリッドで CalendarCellView を並べる
+                    LazyVGrid(columns: columns, spacing: 0) {
+                        ForEach(calendarDays, id: \.id) { item in
+                            CalendarCellView(
+                                date: item.date,
+                                dayNumber: item.dayNumber,
+                                isCurrentMonth: item.isCurrentMonth,
+                                isToday: Calendar.current.isDateInToday(item.date),
+                                segments: projectSegments(for: item.date),
+                                onSelect: {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         selectedDay = item
+                                    }
                                 }
-                            }
+                            )
                         }
                     }
                 }

@@ -94,6 +94,39 @@ final class Project
         }
     }
 
+    // 特定の日付(date)におけるこの案件のバーの位置判定
+    func barPosition(for date: Date) -> ProjectBarPosition? {
+        let calendar = Calendar.current
+        
+        // 1. 範囲指定（isRange）ではない、または開始日がない場合 -> 単日判定
+        guard isRange, let start = startline, let end = deadline else {
+            if let end = deadline, calendar.isDate(date, inSameDayAs: end) {
+                return .single
+            }
+            return nil
+        }
+        
+        let target = calendar.startOfDay(for: date)
+        let startDate = calendar.startOfDay(for: start)
+        let endDate = calendar.startOfDay(for: end)
+
+        // 範囲外なら nil
+        guard target >= startDate && target <= endDate else { return nil }
+
+        let isStartDay = calendar.isDate(target, inSameDayAs: startDate)
+        let isEndDay = calendar.isDate(target, inSameDayAs: endDate)
+
+        if isStartDay && isEndDay {
+            return .single
+        } else if isStartDay {
+            return .start
+        } else if isEndDay {
+            return .end
+        } else {
+            return .middle
+        }
+    }
+    
     init(name: String, brand: Brand? = nil, productName: String = "", status: ProjectStatus = .applied, projectType: ProjectType = .gifting, hasDuty: Bool = true, isRange:Bool = false, startline: Date? = nil, deadline: Date? = nil,note: String = "")
     {
            self.name = name
