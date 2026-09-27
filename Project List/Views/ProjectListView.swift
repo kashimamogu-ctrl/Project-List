@@ -23,19 +23,6 @@ struct ProjectListView: View
     @State private var isShowingDeleteAlert = false
     @State private var selectedFilterStatus: ProjectStatus? = nil
     
-    //TODO；待ってこの関数別ファイルか一番したの方がよくない？？
-    private var filteredProjects: [Project]
-    {
-        if let filterStatus = selectedFilterStatus
-        {
-            return projects.filter { $0.status == filterStatus }
-        }
-        else
-        {
-            return projects
-        }
-    }
-    
     var body: some View
     {
         NavigationStack
@@ -143,7 +130,7 @@ struct ProjectListView: View
                                         Text(project.name)
                                             .font(.body)
                                             .bold()
-                                            .foregroundColor(.primary) // クッキリした黒を維持
+                                            .foregroundColor(.primary) 
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         
                                         if !project.productName.isEmpty
@@ -271,6 +258,18 @@ struct ProjectListView: View
             } message: {
                 Text("選択された \(selectedProjectIDs.count) 件の案件を完全に削除しますか？")
             }
+        }
+    }
+    
+    private var filteredProjects: [Project]
+    {
+        if let filterStatus = selectedFilterStatus
+        {
+            return projects.filter { $0.status == filterStatus }
+        }
+        else
+        {
+            return projects
         }
     }
 }
