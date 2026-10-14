@@ -1,9 +1,3 @@
-//
-//  TaskDetailSheetView.swift
-//  Project List
-//
-//  Created by 菓子間もぐ on 2026/09/25.
-//
 //　TODO: トンマナ決める時にスペースやパディングなどの数値も定数化する？
 
 import SwiftUI
@@ -21,13 +15,9 @@ struct CalenderTaskDetailModal: View
     // タップされた日付（day.date）と期限（deadline）が一致する案件だけを抽出
     private var filteredProjects: [Project]
     {
-        let calendar = Calendar.current
-        return projects.filter
-        { project in
-            guard let deadline = project.deadline
-            else { return false }//なければ中断
-            return calendar.isDate(deadline, inSameDayAs: day.date)
-        }
+        projects.filter { project in
+                project.barPosition(for: day.date) != nil
+            }
     }
     
     var body: some View
@@ -63,34 +53,47 @@ struct CalenderTaskDetailModal: View
                     {
                         VStack(spacing: 12)
                         {
-                            ForEach(filteredProjects) { project in
-                                HStack
+                            ScrollView
+                            {
+                                VStack(spacing: 12)
                                 {
-                                    VStack(alignment: .leading, spacing: 4)
-                                    {
-                                        Text(project.brand?.name ?? "ブランド未設定")
-                                            .font(.caption)
-                                            .foregroundColor(.gray)
-                                        
-                                        Text(project.name)
-                                            .font(.body)
-                                            .fontWeight(.semibold)
+                                    // ↓ここから案件一覧
+                                    ForEach(filteredProjects) { project in
+                                        NavigationLink {
+                                            ProjectDetailView(project: project)
+                                        } label: {
+                                            HStack
+                                            {
+                                                VStack(alignment: .leading, spacing: 4)
+                                                {
+                                                    Text(project.brand?.name ?? "ブランド未設定")
+                                                        .font(.caption)
+                                                        .foregroundColor(.gray)
+                                                    
+                                                    Text(project.name)
+                                                        .font(.body)
+                                                        .fontWeight(.semibold)
+                                                }
+                                                
+                                                Spacer()
+                                                
+                                                // ステータスバッジなどの表示
+                                                Text(project.status.rawValue)
+                                                    .font(.caption2)
+                                                    .padding(.horizontal, 8)
+                                                    .padding(.vertical, 4)
+                                                    .background(Color.blue.opacity(0.1))
+                                                    .foregroundColor(.blue)
+                                                    .cornerRadius(4)
+                                            }
+                                            .padding()
+                                            .background(Color(.systemGray6))
+                                            .cornerRadius(10)
+                                            .contentShape(Rectangle())
+                                        }
+                                        .buttonStyle(.plain)
                                     }
-                                    
-                                    Spacer()
-                                    
-                                    // ステータスバッジなどの表示
-                                    Text(project.status.rawValue)
-                                        .font(.caption2)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(Color.blue.opacity(0.1))
-                                        .foregroundColor(.blue)
-                                        .cornerRadius(4)
                                 }
-                                .padding()
-                                .background(Color(.systemGray6))
-                                .cornerRadius(10)
                             }
                         }
                     }

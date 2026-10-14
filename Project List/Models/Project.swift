@@ -1,9 +1,5 @@
-//
 //  Project.swift
 //  Project List
-//
-//  Created by 菓子間もぐ on 2026/09/20.
-//
 //　このアプリのメインとなる案件のモデル
 
 import Foundation

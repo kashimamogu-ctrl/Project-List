@@ -1,8 +1,3 @@
-//
-//  CalendarView.swift
-//  Project List
-//
-//  Created by 菓子間もぐ on 2026/09/20.
 //　カレンダー画面
 
 // TODO:色のベタ打ちが横行しているので、ちゃんとファイルにまとめ直してトンマナ定義した時にそこ書き換えるだけでいいようにする
@@ -47,25 +42,25 @@ struct CalendarView: View
         return Array(base[shift...] + base[..<shift])
     }
     
-    // 7列の固定グリッド
-    private var columns: [GridItem]
-    {
-        Array(repeating: GridItem(.flexible(), spacing: 0), count: Self.daysInWeek)
-    }
+//    // 7列の固定グリッド
+//    private var columns: [GridItem]
+//    {
+//        Array(repeating: GridItem(.flexible(), spacing: 0), count: Self.daysInWeek)
+//    }
     
-    // 特定の日付に該当するプロジェクトとバー位置を取得
-    private func projectSegments(for date: Date) -> [CalendarProjectSegment]
-    {
-        return projects.compactMap { project in
-            guard let position = project.barPosition(for: date) else { return nil }
-            return CalendarProjectSegment(
-                id: project.id.hashValue.description,
-                name: project.name,
-                status: project.status,
-                position: position
-            )
-        }
-    }
+//    // 特定の日付に該当するプロジェクトとバー位置を取得
+//    private func projectSegments(for date: Date) -> [CalendarProjectSegment]
+//    {
+//        return projects.compactMap { project in
+//            guard let position = project.barPosition(for: date) else { return nil }
+//            return CalendarProjectSegment(
+//                id: project.id.hashValue.description,
+//                name: project.name,
+//                status: project.status,
+//                position: position
+//            )
+//        }
+//    }
     
     var body: some View
     {
@@ -86,10 +81,15 @@ struct CalendarView: View
                     
                     Spacer()
                     
-                    HStack(spacing: 16)
+                    HStack(alignment: .firstTextBaseline, spacing: 8)
                     {
-                        Text(currentMonth, format: .dateTime.year().month().locale(Locale(identifier: "ja_JP")))
-                            .font(.title2).bold()
+                        Text("\(Calendar.current.component(.month, from: currentMonth))月")
+                            .font(.title)
+                            .bold()
+
+                        Text(verbatim: "\(Calendar.current.component(.year, from: currentMonth))年")
+                            .font(.headline)
+                            .bold()
                     }
                     
                     Spacer()
@@ -120,17 +120,21 @@ struct CalendarView: View
                     Divider()
                     
                     // 7列グリッドで CalendarCellView を並べる
-                    LazyVGrid(columns: columns, spacing: 0) {
-                        ForEach(calendarDays, id: \.id) { item in
-                            CalendarCellView(
-                                date: item.date,
-                                dayNumber: item.dayNumber,
-                                isCurrentMonth: item.isCurrentMonth,
-                                isToday: Calendar.current.isDateInToday(item.date),
-                                segments: projectSegments(for: item.date),
-                                onSelect: {
+                    // 42日分を7日ずつに分け、6週間分の行として表示
+                    VStack(spacing: 0)
+                    {
+                        ForEach(0..<6, id: \.self) { weekIndex in
+                            let startIndex = weekIndex * 7
+                            let weekDays = Array(
+                                calendarDays.dropFirst(startIndex).prefix(7)
+                            )
+
+                            CalendarWeekRowView(
+                                days: weekDays,
+                                projects: projects,
+                                onSelectDay: { day in
                                     withAnimation(.easeInOut(duration: 0.2)) {
-                                        selectedDay = item
+                                        selectedDay = day
                                     }
                                 }
                             )

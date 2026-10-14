@@ -1,10 +1,3 @@
-//
-//  AdBannerView.swift
-//  Project List
-//
-//  Created by 菓子間もぐ on 2026/09/25.
-//
-
 import SwiftUI
 
 // 今はダミー表示。後でGoogle AdMobのViewに差し替える

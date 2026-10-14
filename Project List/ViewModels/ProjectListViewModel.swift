@@ -1,9 +1,3 @@
-//
-//  ProjectListViewModel.swift
-//  Project List
-//
-//  Created by 菓子間もぐ on 2026/09/20.
-//
 //  案件リスト画面で使うモデルを監視
 
 import Foundation

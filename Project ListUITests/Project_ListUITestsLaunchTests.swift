@@ -1,10 +1,3 @@
-//
-//  Project_ListUITestsLaunchTests.swift
-//  Project ListUITests
-//
-//  Created by 菓子間もぐ on 2026/08/31.
-//
-
 import XCTest
 
 final class Project_ListUITestsLaunchTests: XCTestCase {

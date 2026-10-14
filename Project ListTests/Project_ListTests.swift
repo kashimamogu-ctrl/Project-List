@@ -1,10 +1,3 @@
-//
-//  Project_ListTests.swift
-//  Project ListTests
-//
-//  Created by 菓子間もぐ on 2026/08/31.
-//
-
 import Testing
 @testable import Project_List
 

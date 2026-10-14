@@ -1,8 +1,3 @@
-//
-//  Project_ListApp.swift
-//  Project List
-//
-//  Created by　菓子間もぐ on 2026/09/22.
 // アプリの起動が始まるファイル
 
 import SwiftUI

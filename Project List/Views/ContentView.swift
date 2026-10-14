@@ -1,8 +1,3 @@
-//
-//  CalendarView.swift
-//  Project List
-//
-//  Created by 菓子間もぐ on 2026/09/20.
 //　メイン画面
 
 import SwiftUI
@@ -19,12 +14,14 @@ struct ContentView: View
     {
         TabView(selection: $selectedTab)
         {
-            
-            CalendarView()
-                .tabItem {
-                    Label("カレンダー", systemImage: "calendar")
-                }
-                .tag(0) // タブの識別番号
+            NavigationStack
+            {
+                CalendarView()
+            }
+            .tabItem {
+                Label("カレンダー", systemImage: "calendar")
+            }
+            .tag(0) // タブの識別番号
             
             NavigationStack
             {

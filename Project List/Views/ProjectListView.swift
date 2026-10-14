@@ -1,9 +1,3 @@
-//
-//  ProjectDetailView.swift
-//  Project List
-//
-//  Created by 菓子間もぐ　on 2026/09/23.
-//
 //TODO: 絞り込み機能は最初「全て」「未完了のみ」「期限超過」の３つにする
 
 import SwiftUI
