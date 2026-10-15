@@ -12,6 +12,11 @@ struct Project_ListApp: App
         {
             ContentView()
         }
-        .modelContainer(for: [Project.self, Brand.self])
+        .modelContainer(for: [
+            Project.self,
+            Brand.self,
+            UserProfile.self,
+            ExternalAccount.self
+        ])
     }
 }
