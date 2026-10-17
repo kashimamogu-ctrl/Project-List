@@ -40,7 +40,7 @@ struct ProjectListView: View
                         
                         ForEach(ProjectStatus.allCases){ status in
                             Button(action: { selectedFilterStatus = status }) {
-                                Text(status.rawValue)
+                                Text(status.label)
                                     .font(.footnote).bold()
                                     .padding(.horizontal, 14).padding(.vertical, 8)
                                     .background(selectedFilterStatus == status ? Color.blue : Color(.systemGray6))

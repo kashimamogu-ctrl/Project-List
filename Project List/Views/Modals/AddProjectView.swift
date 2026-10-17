@@ -119,7 +119,7 @@ struct AddProjectView: View
                         if let existingBrand
                         {
                             // 既存ブランドのジャンルは表示のみ（変更はブランド編集画面で）
-                            DropdownLabel(text: selectedGenre?.rawValue ?? "選択してください", isPlaceholder: selectedGenre == nil)
+                            DropdownLabel(text: selectedGenre?.label ?? "選択してください", isPlaceholder: selectedGenre == nil)
                                 .opacity(0.6)
                             Text("登録済みのブランドです。ジャンルはブランド画面で変更できます。")
                                 .font(.caption)
@@ -131,13 +131,13 @@ struct AddProjectView: View
                             {
                                 ForEach(BrandGenre.allCases)
                                 { genre in
-                                    Button(genre.rawValue)
+                                    Button(genre.label)
                                     {
                                         selectedGenre = genre
                                     }
                                 }
                             }label:{
-                                DropdownLabel(text: selectedGenre?.rawValue ?? "選択してください", isPlaceholder: selectedGenre == nil)
+                                DropdownLabel(text: selectedGenre?.label ?? "選択してください", isPlaceholder: selectedGenre == nil)
                             }
                         }
                     }
@@ -148,13 +148,13 @@ struct AddProjectView: View
                         Menu
                         {
                             ForEach(ProjectStatus.allCases) { status in
-                                Button(status.rawValue)
+                                Button(status.label)
                                 {
                                     selectedStatus = status
                                 }
                             }
                         } label: {
-                            DropdownLabel(text: selectedStatus.rawValue)
+                            DropdownLabel(text: selectedStatus.label)
                         }
                     }
                     
@@ -164,12 +164,12 @@ struct AddProjectView: View
                         Menu
                         {
                             ForEach(ProjectType.allCases) { type in
-                                Button(type.rawValue) {
+                                Button(type.label) {
                                     selectedType = type
                                 }
                             }
                         } label: {
-                            DropdownLabel(text: selectedType.rawValue)
+                            DropdownLabel(text: selectedType.label)
                         }
                     }
                     

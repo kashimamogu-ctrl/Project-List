@@ -7,15 +7,26 @@ import SwiftData
 import SwiftUI
 
 // 案件の進捗状況
-// TODO：ユーザー自身が追加できるようにしたい
-enum ProjectStatus: String, CaseIterable, Identifiable
+// rawValue は保存用のキー。表示名を変えたいときは label だけを変える
+enum ProjectStatus: String, CaseIterable, Identifiable, StoredOption
 {
-    case applied = "応募済"
-    case waiting = "商品受け取り待ち"
-    case progress = "進行中"
-    case completed = "完了"
-    
+    case applied
+    case waiting
+    case progress
+    case completed
+
     var id: String { self.rawValue }
+
+    var label: String
+    {
+        switch self
+        {
+        case .applied:   return "応募済"
+        case .waiting:   return "商品受け取り待ち"
+        case .progress:  return "進行中"
+        case .completed: return "完了"
+        }
+    }
     
     var foregroundColor: Color
     {
@@ -45,15 +56,25 @@ enum ProjectBarPosition
 }
 
 // 案件タイプ
-// TODO：ユーザー自身が追加できるようにしたい
-enum ProjectType: String, CaseIterable, Identifiable
+enum ProjectType: String, CaseIterable, Identifiable, StoredOption
 {
-    case gifting = "ギフティング"
-    case monitor = "モニター"
-    case ambassador = "アンバサダー"
-    case other = "その他"
-    
+    case gifting
+    case monitor
+    case ambassador
+    case other
+
     var id: String { self.rawValue }
+
+    var label: String
+    {
+        switch self
+        {
+        case .gifting:    return "ギフティング"
+        case .monitor:    return "モニター"
+        case .ambassador: return "アンバサダー"
+        case .other:      return "その他"
+        }
+    }
 }
 
 @Model
@@ -76,13 +97,13 @@ final class Project
     //保存のためにStringにしているものはEnumと変換できる機能をもっておく
     var status: ProjectStatus
     {
-        get { ProjectStatus(rawValue: statusRawValue) ?? .applied }
+        get { ProjectStatus.fromStored(statusRawValue) ?? .applied }
         set { statusRawValue = newValue.rawValue }
     }
     
     var projectType: ProjectType
     {
-        get { ProjectType(rawValue: typeRawValue) ?? .gifting }
+        get { ProjectType.fromStored(typeRawValue) ?? .gifting }
         set { typeRawValue = newValue.rawValue }
     }
     

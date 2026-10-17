@@ -139,7 +139,7 @@ struct ProjectDetailView: View
             {
                 Section(header: Text("基本情報")) {
                     LabeledContent("ブランド名") { Text(project.brand?.name ?? "未設定").bold() }
-                    LabeledContent("ジャンル") { Text(project.brand?.genre.rawValue ?? "その他") }
+                    LabeledContent("ジャンル") { Text(project.brand?.genre.label ?? "その他") }
                     LabeledContent("案件名") { Text(project.name) }
                     if !project.productName.isEmpty {
                         LabeledContent("商品名") { Text(project.productName) }
@@ -151,14 +151,9 @@ struct ProjectDetailView: View
                     HStack {
                         Text("進捗")
                         Spacer()
-                        Text(project.status.rawValue)
-                            .font(.caption).bold()
-                            .padding(.horizontal, 8).padding(.vertical, 4)
-                            .background(project.status.backgroundColor)
-                            .foregroundColor(project.status.foregroundColor)
-                            .cornerRadius(4)
+                        StatusBadge(status: project.status)
                     }
-                    LabeledContent("案件タイプ") { Text(project.projectType.rawValue) }
+                    LabeledContent("案件タイプ") { Text(project.projectType.label) }
                     HStack {
                         Text("投稿義務")
                         Spacer()

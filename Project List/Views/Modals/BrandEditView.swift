@@ -53,7 +53,7 @@ struct BrandEditView: View
                     Picker("ジャンル", selection: $genre)
                     {
                         ForEach(BrandGenre.allCases) { item in
-                            Text(item.rawValue).tag(item)
+                            Text(item.label).tag(item)
                         }
                     }
                 }

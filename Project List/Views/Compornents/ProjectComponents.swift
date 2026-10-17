@@ -11,7 +11,7 @@ struct StatusBadge: View
 
     var body: some View
     {
-        Text(status.rawValue)
+        Text(status.label)
             .font(.caption)
             .bold()
             .padding(.horizontal, 8)

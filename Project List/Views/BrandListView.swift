@@ -47,7 +47,7 @@ struct BrandListView: View
                                         .bold()
                                         .foregroundColor(.primary)
                                     
-                                    Text(brand.genre.rawValue)
+                                    Text(brand.genre.label)
                                         .font(.caption2)
                                         .bold()
                                         .padding(.horizontal, 8)

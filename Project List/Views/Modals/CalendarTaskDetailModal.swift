@@ -67,7 +67,7 @@ struct CalendarTaskDetailModal: View
                                    Spacer()
                                    
                                    // ステータスバッジなどの表示
-                                   Text(project.status.rawValue)
+                                   Text(project.status.label)
                                        .font(.caption2)
                                        .padding(.horizontal, 8)
                                        .padding(.vertical, 4)

@@ -31,7 +31,7 @@ struct BrandProjectListView: View
                     {
                         infoRow(title: "ブランド名", value: brand.name, isBold: true)
                         Divider().padding(.horizontal)
-                        infoRow(title: "ジャンル", value: brand.genre.rawValue, isBold: false)
+                        infoRow(title: "ジャンル", value: brand.genre.label, isBold: false)
 
                         if !brand.note.isEmpty
                         {

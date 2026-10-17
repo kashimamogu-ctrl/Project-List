@@ -6,16 +6,29 @@ import Foundation
 import SwiftData
 
 // ブランドジャンル
-enum BrandGenre: String, CaseIterable, Identifiable
+enum BrandGenre: String, CaseIterable, Identifiable, StoredOption
 {
-    case cosmetics = "コスメ"
-    case skincare = "スキンケア"
-    case haircare = "ヘアケア・ボディケア"
-    case apparel = "アパレル"
-    case lifestyle = "ライフスタイル"
-    case other = "その他"
-    
+    case cosmetics
+    case skincare
+    case haircare
+    case apparel
+    case lifestyle
+    case other
+
     var id: String { self.rawValue }
+
+    var label: String
+    {
+        switch self
+        {
+        case .cosmetics: return "コスメ"
+        case .skincare:  return "スキンケア"
+        case .haircare:  return "ヘアケア・ボディケア"
+        case .apparel:   return "アパレル"
+        case .lifestyle: return "ライフスタイル"
+        case .other:     return "その他"
+        }
+    }
 }
 
 @Model
@@ -33,7 +46,7 @@ final class Brand
     //enumに変換
     var genre: BrandGenre
     {
-        get { BrandGenre(rawValue: genreRawValue) ?? .cosmetics }
+        get { BrandGenre.fromStored(genreRawValue) ?? .cosmetics }
         set { genreRawValue = newValue.rawValue }
     }
     
