@@ -27,7 +27,9 @@ struct ProjectDetailView: View
     // バリデーション：必須項目が埋まっているか
     private var isValid: Bool
     {
-        !name.isEmpty && !brandName.isEmpty
+        ProjectInputRules.isValidRequired(name, maxLength: ProjectInputRules.nameMaxLength)
+        && ProjectInputRules.isValidRequired(brandName, maxLength: ProjectInputRules.brandNameMaxLength)
+        && ProjectInputRules.isWithinLimit(productName, maxLength: ProjectInputRules.productNameMaxLength)
     }
     
     var body: some View
@@ -40,16 +42,19 @@ struct ProjectDetailView: View
                     editableSection(title: "案件名", isRequired: true) {
                         TextField("案件名を入力", text: $name)
                             .textFieldStyle(.roundedBorder)
+                        CharacterCountText(text: name, maxLength: ProjectInputRules.nameMaxLength)
                     }
                     
                     editableSection(title: "ブランド名", isRequired: true) {
                         TextField("ブランド名を入力", text: $brandName)
                             .textFieldStyle(.roundedBorder)
+                        CharacterCountText(text: brandName, maxLength: ProjectInputRules.brandNameMaxLength)
                     }
                     
                     editableSection(title: "商品名", isRequired: false) {
                         TextField("商品名を入力", text: $productName)
                             .textFieldStyle(.roundedBorder)
+                        CharacterCountText(text: productName, maxLength: ProjectInputRules.productNameMaxLength)
                     }
                     
                     editableSection(title: "ブランドジャンル", isRequired: true) {
@@ -213,8 +218,8 @@ struct ProjectDetailView: View
     // 保存時のデータ上書き
     private func updateProject()
     {
-        project.name = name
-        project.productName = productName
+        project.name = ProjectInputRules.trimmed(name)
+        project.productName = ProjectInputRules.trimmed(productName)
         project.status = selectedStatus
         project.projectType = selectedType
         project.hasDuty = hasDuty

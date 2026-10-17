@@ -82,9 +82,13 @@ final class Project
         guard let deadline = deadline else { return nil }
         
         // 期間指定かつ開始日が存在する場合
-        if isRange, let startline = startline {
+        if isRange, let startline = startline,
+           !Calendar.current.isDate(startline, inSameDayAs: deadline)
+        {
             return "\(startline.localizedYMD) 〜 \(deadline.localizedYMD)"
-        } else {
+        }
+        else
+        {
             // 単日の場合（例: 〜 2026/09/26）
             return "〜 \(deadline.localizedYMD)"
         }

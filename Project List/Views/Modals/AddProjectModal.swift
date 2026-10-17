@@ -26,10 +26,13 @@ struct AddProjectView: View
     @State private var deadline: Date = Date()
     @State private var note: String = ""
     
-    // バリデーション：必須項目がすべて埋まっているか
+    // バリデーション：必須項目がすべて埋まっているかと、文字数制限内に収まっているか
     private var isValid: Bool
     {
-        !name.isEmpty && !brandName.isEmpty && selectedGenre != nil
+        ProjectInputRules.isValidRequired(name, maxLength: ProjectInputRules.nameMaxLength)
+        && ProjectInputRules.isValidRequired(brandName, maxLength: ProjectInputRules.brandNameMaxLength)
+        && ProjectInputRules.isWithinLimit(productName, maxLength: ProjectInputRules.productNameMaxLength)
+        && selectedGenre != nil
     }
     
     var body: some View
@@ -75,7 +78,7 @@ struct AddProjectView: View
                     {
                         TextField("例) Apple Love様新作リップ X投稿", text: $name)
                             .textFieldStyle(.roundedBorder)
-                        captionText("30文字以内で入力してください。")
+                        CharacterCountText(text: name, maxLength: ProjectInputRules.nameMaxLength)
                     }
                     
                     // ブランド名（必須）
@@ -83,7 +86,7 @@ struct AddProjectView: View
                     {
                         TextField("例) Apple Love", text: $brandName)
                             .textFieldStyle(.roundedBorder)
-                        captionText("20文字以内で入力してください。")
+                        CharacterCountText(text: brandName, maxLength: ProjectInputRules.brandNameMaxLength)
                     }
                     
                     // 商品名
@@ -91,7 +94,7 @@ struct AddProjectView: View
                     {
                         TextField("例) ぽってりリップ 01 ダークチェリー", text: $productName)
                             .textFieldStyle(.roundedBorder)
-                        captionText("30文字以内で入力してください。")
+                        CharacterCountText(text: productName, maxLength: ProjectInputRules.productNameMaxLength)
                     }
                     
                     // ブランドジャンル（選択）
@@ -251,11 +254,6 @@ struct AddProjectView: View
         }
     }
     
-    private func captionText(_ text: String) -> some View
-    {
-        Text(text).font(.caption).foregroundColor(.gray)
-    }
-    
     // カスタムラジオボタン
     private func radioButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -286,9 +284,9 @@ struct AddProjectView: View
         let fetchedBrand = fetchOrCreateBrand(named: brandName, genre: genre)
         
         let newProject = Project(
-            name: name,
+            name: ProjectInputRules.trimmed(name),
             brand: fetchedBrand,
-            productName: productName,
+            productName: ProjectInputRules.trimmed(productName),
             status: selectedStatus,
             projectType: selectedType,
             hasDuty: hasDuty,
