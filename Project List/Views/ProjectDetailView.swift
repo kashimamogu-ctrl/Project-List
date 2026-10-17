@@ -49,29 +49,29 @@ struct ProjectDetailView: View
             if isEditMode
             {
                 Section(header: Text("基本情報の編集")) {
-                    editableSection(title: "案件名", isRequired: true) {
+                    FormField(title: "案件名", isRequired: true) {
                         TextField("案件名を入力", text: $name)
                             .textFieldStyle(.roundedBorder)
                         CharacterCountText(text: name, maxLength: ProjectInputRules.nameMaxLength)
                     }
                     
-                    editableSection(title: "ブランド名", isRequired: true) {
+                    FormField(title: "ブランド名", isRequired: true) {
                         TextField("ブランド名を入力", text: $brandName)
                             .textFieldStyle(.roundedBorder)
                         CharacterCountText(text: brandName, maxLength: ProjectInputRules.brandNameMaxLength)
                     }
                     
-                    editableSection(title: "商品名", isRequired: false) {
+                    FormField(title: "商品名", isRequired: false) {
                         TextField("商品名を入力", text: $productName)
                             .textFieldStyle(.roundedBorder)
                         CharacterCountText(text: productName, maxLength: ProjectInputRules.productNameMaxLength)
                     }
                     
-                    editableSection(title: "ブランドジャンル", isRequired: true) {
+                    FormField(title: "ブランドジャンル", isRequired: true) {
                         if let existingBrand
                         {
                             // 既存ブランドのジャンルは表示のみ（変更はブランド編集画面で）
-                            dropdownLabel(text: existingBrand.genre.rawValue)
+                            DropdownLabel(text: existingBrand.genre.rawValue)
                                 .opacity(0.6)
                             Text("登録済みのブランドです。ジャンルはブランド画面で変更できます。")
                                 .font(.caption)
@@ -84,7 +84,7 @@ struct ProjectDetailView: View
                                     Button(genre.rawValue) { selectedGenre = genre }
                                 }
                             } label: {
-                                dropdownLabel(text: selectedGenre.rawValue)
+                                DropdownLabel(text: selectedGenre.rawValue)
                             }
                         }
                     }
@@ -92,71 +92,40 @@ struct ProjectDetailView: View
                 
                 Section(header: Text("ステータスと条件の編集"))
                 {
-                    editableSection(title: "進捗", isRequired: false)
+                    FormField(title: "進捗", isRequired: false)
                     {
                         Menu {
                             ForEach(ProjectStatus.allCases) { status in
                                 Button(status.rawValue) { selectedStatus = status }
                             }
                         } label: {
-                            dropdownLabel(text: selectedStatus.rawValue)
+                            DropdownLabel(text: selectedStatus.rawValue)
                         }
                     }
                     
-                    editableSection(title: "案件タイプ", isRequired: false) {
+                    FormField(title: "案件タイプ", isRequired: false) {
                         Menu {
                             ForEach(ProjectType.allCases) { type in
                                 Button(type.rawValue) { selectedType = type }
                             }
                         } label: {
-                            dropdownLabel(text: selectedType.rawValue)
+                            DropdownLabel(text: selectedType.rawValue)
                         }
                     }
                     
-                    editableSection(title: "投稿義務", isRequired: false) {
+                    FormField(title: "投稿義務", isRequired: false) {
                         HStack(spacing: 24) {
-                            radioButton(title: "あり", isSelected: hasDuty) { hasDuty = true }
-                            radioButton(title: "なし", isSelected: !hasDuty) { hasDuty = false }
+                            RadioButton(title: "あり", isSelected: hasDuty) { hasDuty = true }
+                            RadioButton(title: "なし", isSelected: !hasDuty) { hasDuty = false }
                         }
                     }
                     
-                    editableSection(title: "期限", isRequired: false)
-                    {
-                        Toggle("期限を設定する", isOn: $hasDeadline)
-                    }
-
-                    if hasDeadline
-                    {
-                        VStack(alignment: .leading, spacing: 8)
-                        {
-                            Toggle("期間で指定する", isOn: Binding(
-                                get: { isRange },
-                                set: { newValue in
-                                    isRange = newValue
-                                    // 期間指定をONにしたら、開始日を締切日に揃える
-                                    if newValue { startline = deadline }
-                                }
-                            ))
-                            .toggleStyle(CheckboxToggleStyle())
-
-                            if isRange
-                            {
-                                DatePicker("開始日", selection: $startline, displayedComponents: .date)
-                                    .onChange(of: startline) { _, newValue in
-                                        if newValue > deadline { deadline = newValue }
-                                    }
-
-                                DatePicker("終了日", selection: $deadline, displayedComponents: .date)
-                                    .onChange(of: deadline) { _, newValue in
-                                        if newValue < startline { startline = newValue }
-                                    }
-                            }
-                            else
-                            {
-                                DatePicker("期日", selection: $deadline, displayedComponents: .date)
-                            }
-                        }
-                    }
+                    DeadlineFields(
+                        hasDeadline: $hasDeadline,
+                        isRange: $isRange,
+                        startline: $startline,
+                        deadline: $deadline
+                    )
                 }
                 
                 Section(header: Text("メモの編集")) {
@@ -313,47 +282,4 @@ struct ProjectDetailView: View
             return newBrand
         }
     }
-}
-
-
-//TODO:この辺の関数ここに書かず別ファイルとかに移動させたいなあ
-//　共通UIコンポーネント群
-private func editableSection<Content: View>(title: String, isRequired: Bool, @ViewBuilder content: () -> Content) -> some View
-{
-    VStack(alignment: .leading, spacing: 6)
-    {
-        HStack(spacing: 4) {
-            Text(title).font(.caption).foregroundColor(.gray)
-            if isRequired { Text("＊必須").font(.caption2).bold().foregroundColor(.red)
-            }
-        }
-        content()
-    }
-}
-
-private func dropdownLabel(text: String) -> some View
-{
-    HStack {Text(text).foregroundColor(.primary)
-        Spacer()
-        Image(systemName: "chevron.down").font(.footnote).foregroundColor(.gray)}.padding(8).background(Color(.systemBackground)).overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(.systemGray4), lineWidth: 0.5))
-}
-
-private func radioButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View
-{
-    Button(action: action)
-    {
-        HStack(spacing: 6)
-        {
-            ZStack
-            {
-                Circle().stroke(Color.gray, lineWidth: 1.5).frame(width: 18, height: 18)
-                
-                if isSelected
-                {
-                    Circle().fill(Color.secondary).frame(width: 10, height: 10)
-                }
-            }
-            Text(title).font(.body).foregroundColor(.primary)
-        }
-    }.buttonStyle(.plain)
 }

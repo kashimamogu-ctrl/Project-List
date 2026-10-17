@@ -85,3 +85,56 @@ struct ProjectCardContent: View
         }
     }
 }
+
+// 期限の入力欄（作成画面と編集画面で共通）
+struct DeadlineFields: View
+{
+    @Binding var hasDeadline: Bool
+    @Binding var isRange: Bool
+    @Binding var startline: Date
+    @Binding var deadline: Date
+
+    var body: some View
+    {
+        FormField(title: "期限")
+        {
+            Toggle("期限を設定する", isOn: $hasDeadline)
+        }
+
+        if hasDeadline
+        {
+            VStack(alignment: .leading, spacing: 8)
+            {
+                Toggle("期間で指定する", isOn: Binding(
+                    get: { isRange },
+                    set: { newValue in
+                        isRange = newValue
+                        // 期間指定をONにしたら、開始日を締切日に揃える
+                        if newValue { startline = deadline }
+                    }
+                ))
+                .toggleStyle(CheckboxToggleStyle())
+
+                if isRange
+                {
+                    DatePicker("開始日", selection: $startline, displayedComponents: .date)
+                        .onChange(of: startline) { _, newValue in
+                            // 開始日が終了日より後になったら、終了日を揃える
+                            if newValue > deadline { deadline = newValue }
+                        }
+
+                    DatePicker("終了日", selection: $deadline, displayedComponents: .date)
+                        .onChange(of: deadline) { _, newValue in
+                            // 終了日が開始日より前になったら、開始日を揃える
+                            if newValue < startline { startline = newValue }
+                        }
+                }
+                else
+                {
+                    DatePicker("期日", selection: $deadline, displayedComponents: .date)
+                }
+            }
+            .environment(\.locale, Locale(identifier: "ja_JP"))
+        }
+    }
+}

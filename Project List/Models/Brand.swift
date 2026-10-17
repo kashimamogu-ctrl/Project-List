@@ -44,3 +44,33 @@ final class Brand
         self.note = note
     }
 }
+
+
+extension Brand
+{
+    // 名前が一致するブランドを探す（前後の空白は無視）
+    static func find(named name: String, in brands: [Brand]) -> Brand?
+    {
+        let trimmedName = ProjectInputRules.trimmed(name)
+        return brands.first { $0.name == trimmedName }
+    }
+}
+
+extension ModelContext
+{
+    // 名前が一致するブランドを返す。なければ新しく作る
+    func fetchOrCreateBrand(named name: String, genre: BrandGenre) -> Brand
+    {
+        let trimmedName = ProjectInputRules.trimmed(name)
+        let descriptor = FetchDescriptor<Brand>(predicate: #Predicate { $0.name == trimmedName })
+
+        if let existingBrand = try? fetch(descriptor).first
+        {
+            return existingBrand
+        }
+
+        let newBrand = Brand(name: trimmedName, genre: genre.rawValue)
+        insert(newBrand)
+        return newBrand
+    }
+}
