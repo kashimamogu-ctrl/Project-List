@@ -7,16 +7,6 @@ import SwiftData
 @Observable
 class ProjectListViewModel
 {
-     // 案件の削除
-     func deleteProjects(at offsets: IndexSet, from projects: [Project], in modelContext: ModelContext)
-    {
-         for index in offsets
-        {
-             let projectToDelete = projects[index]
-             modelContext.delete(projectToDelete)
-         }
-     }
-    
     //　案件の複数削除
     func deleteMultipleProjects(ids: Set<Project.ID>, from projects: [Project], in modelContext: ModelContext)
     {

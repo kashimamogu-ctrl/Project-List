@@ -38,7 +38,8 @@ struct BrandListView: View
                     { brand in
                         NavigationLink(value: brand)
                         {
-                            HStack(spacing: 12) {
+                            HStack(spacing: 12)
+                            {
                                 VStack(alignment: .leading, spacing: 6)
                                 {
                                     Text(brand.name)
@@ -51,9 +52,9 @@ struct BrandListView: View
                                         .bold()
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
-                                        .background(Color.gray.opacity(0.1))
+                                        .background(AppTheme.genreTagBackground)
                                         .foregroundColor(.secondary)
-                                        .cornerRadius(4)
+                                        .cornerRadius(AppTheme.tagCornerRadius)
                                 }
                                 
                                 Spacer()
@@ -67,9 +68,8 @@ struct BrandListView: View
                                     .foregroundColor(.gray)
                             }
                             .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                            .padding()
+                            .cardStyle()
                         }
                         .buttonStyle(.plain)
                     }

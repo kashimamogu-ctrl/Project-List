@@ -3,7 +3,7 @@
 import SwiftUI
 import SwiftData
 
-struct CalenderTaskDetailModal: View
+struct CalendarTaskDetailModal: View
 {
     let day: CalendarDay
     let onClose: () -> Void // モーダルを閉じるための処理
@@ -29,7 +29,7 @@ struct CalenderTaskDetailModal: View
                 // ヘッダー部分
                 HStack
                 {
-                    Text("\(day.date.localizedYMD) の予定")
+                    Text("\(day.date.shortDateText) の予定")
                     
                     Spacer()
                     

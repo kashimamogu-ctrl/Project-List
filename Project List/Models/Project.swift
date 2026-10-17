@@ -35,6 +35,15 @@ enum ProjectStatus: String, CaseIterable, Identifiable
     }
 }
 
+// バーの表示位置
+enum ProjectBarPosition
+{
+    case single      // 単日
+    case start       // 開始日
+    case middle      // 途中
+    case end         // 終了日
+}
+
 // 案件タイプ
 // TODO：ユーザー自身が追加できるようにしたい
 enum ProjectType: String, CaseIterable, Identifiable
@@ -85,12 +94,12 @@ final class Project
         if isRange, let startline = startline,
            !Calendar.current.isDate(startline, inSameDayAs: deadline)
         {
-            return "\(startline.localizedYMD) 〜 \(deadline.localizedYMD)"
+            return "\(startline.shortDateText) 〜 \(deadline.shortDateText)"
         }
         else
         {
             // 単日の場合（例: 〜 2026/09/26）
-            return "〜 \(deadline.localizedYMD)"
+            return "〜 \(deadline.shortDateText)"
         }
     }
 

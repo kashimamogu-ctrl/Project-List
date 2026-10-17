@@ -49,9 +49,7 @@ struct BrandProjectListView: View
                             .padding()
                         }
                     }
-                    .background(Color(.systemBackground))
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    .cardStyle()
                 }
                 
 
@@ -85,64 +83,9 @@ struct BrandProjectListView: View
                         { project in
                             NavigationLink(destination: ProjectDetailView(project: project))
                             {
-                                HStack(spacing: 12)
-                                {
-                                    VStack(alignment: .leading, spacing: 4)
-                                    {
-                                        HStack
-                                        {
-                                            Text(brand.name)
-                                                .font(.caption)
-                                                .bold()
-                                                .padding(.horizontal, 8)
-                                                .padding(.vertical, 4)
-                                                .background(Color.blue.opacity(0.1))
-                                                .foregroundColor(.blue)
-                                                .cornerRadius(4)
-                                            
-                                            Spacer()
-                                            
-                                            Text(project.status.rawValue)
-                                                .font(.caption)
-                                                .bold()
-                                                .padding(.horizontal, 8)
-                                                .padding(.vertical, 4)
-                                                .background(project.status.backgroundColor)
-                                                .foregroundColor(project.status.foregroundColor)
-                                                .cornerRadius(4)
-                                        }
-                                        
-                                        Text(project.name)
-                                            .font(.body)
-                                            .bold()
-                                            .foregroundColor(.primary)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        
-                                        HStack
-                                        {
-                                            if !project.productName.isEmpty
-                                            {
-                                                Text("商品: \(project.productName)")
-                                                    .font(.footnote)
-                                                    .foregroundColor(.secondary)
-                                            }
-                                            
-                                            Spacer()
-                                            
-                                            if let deadlineText = project.deadlineText
-                                            {
-                                                Text(deadlineText)
-                                                    .font(.caption2)
-                                                    .foregroundColor(.black)
-                                            }
-                                        }
-                                        .padding(.top, 2)
-                                    }
-                                }
-                                .padding()
-                                .background(Color(.systemBackground))
-                                .cornerRadius(12)
-                                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                                ProjectCardContent(project: project)
+                                    .padding()
+                                    .cardStyle()
                             }
                             .buttonStyle(.plain)
                         }
@@ -165,9 +108,7 @@ struct BrandProjectListView: View
                     .bold()
                     .foregroundColor(.red)
                     .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    .cardStyle()
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 8)

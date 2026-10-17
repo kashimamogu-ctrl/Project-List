@@ -5,14 +5,6 @@
 import SwiftUI
 import SwiftData
 
-struct CalendarDay: Identifiable, Equatable
-{
-    let id = UUID()
-    let date: Date           // その日の正確な日付データ
-    let isCurrentMonth: Bool // 今月の日付かどうか(前月・来月もグレーアウト表示するため)
-    let dayNumber: Int       // 表示用の「日」（例: 24）
-}
-
 struct CalendarView: View
 {
     // 案件一覧の取得
@@ -30,7 +22,6 @@ struct CalendarView: View
     // 開始曜日の設定（1 = 日曜日, 2 = 月曜日）
     @AppStorage("firstWeekday") private var firstWeekday = 2 // 「１」なら日曜始まり
     
-    // ContentView から受け取る、今選ばれているタブ
     // ContentView から受け取る、タブを切り替えた回数
     let tabChangeCount: Int
 
@@ -130,7 +121,7 @@ struct CalendarView: View
                         }
                     }
                 }
-                .border(Color.black, width: 0.5)
+                .border(Color.primary, width: 0.5)
             }
             .padding(.horizontal, 20)
             .padding(.top, 16)
@@ -148,7 +139,7 @@ struct CalendarView: View
                     }
                 
                 // ふわっと浮き出るダイアログ
-                CalenderTaskDetailModal(day: day) {
+                CalendarTaskDetailModal(day: day) {
                     withAnimation(.easeOut(duration: 0.2)) {
                         selectedDay = nil
                     }
@@ -174,16 +165,6 @@ struct CalendarView: View
             withTransaction(transaction) {
                 selectedDay = nil
             }
-        }
-    }
-    
-    // 特定の日付が締め切りの案件を取得
-    private func projects(for date: Date) -> [Project]
-    {
-        let calendar = Calendar.current
-        return projects.filter { project in
-            guard let deadline = project.deadline else { return false }
-            return calendar.isDate(deadline, inSameDayAs: date)
         }
     }
     
@@ -245,22 +226,6 @@ struct CalendarView: View
             }
         }
         return days
-    }
-    
-    private func tileBackgroundColor(for item: CalendarDay) -> Color
-    {
-        if Calendar.current.isDateInToday(item.date)
-        {
-            return Color.yellow.opacity(0.2)
-        }
-        else if item.isCurrentMonth
-        {
-            return Color.white
-        }
-        else
-        {
-            return Color.gray.opacity(0.1)
-        }
     }
 }
 

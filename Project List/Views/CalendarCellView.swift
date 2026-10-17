@@ -1,14 +1,5 @@
 import SwiftUI
 
-// バーの表示位置
-enum ProjectBarPosition
-{
-    case single      // 単日
-    case start       // 開始日
-    case middle      // 途中
-    case end         // 終了日
-}
-
 // セル描画用のデータ構造
 struct CalendarCellView: View
 {
@@ -96,7 +87,7 @@ struct CalendarWeekRowView: View
                     {
                         Text(bar.name)
                             .font(.system(size: 9, weight: .bold))
-                            .foregroundColor(.black.opacity(0.85))
+                            .foregroundColor(.primary.opacity(0.85))
                             .lineLimit(1)
                             .truncationMode(.tail)
                             .padding(.leading, 4)

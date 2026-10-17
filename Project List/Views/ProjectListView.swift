@@ -93,64 +93,11 @@ struct ProjectListView: View
                                     .buttonStyle(.borderless)
                                     .transition(.move(edge: .leading).combined(with: .opacity))
                                 }
-                                
-                                VStack(alignment: .leading, spacing: 4)
-                                {
-                                    HStack
-                                    {
-                                        Text(project.brand?.name ?? "ブランド未設定")
-                                            .font(.caption)
-                                            .bold()
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 4)
-                                            .background(Color.blue.opacity(0.1))
-                                            .foregroundColor(.blue)
-                                            .cornerRadius(4)
-                                        
-                                        Spacer()
-                                        
-                                        Text(project.status.rawValue)
-                                            .font(.caption)
-                                            .bold()
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 4)
-                                            .background(project.status.backgroundColor)
-                                            .foregroundColor(project.status.foregroundColor)
-                                            .cornerRadius(4)
-                                    }
-                                    
-                                    Text(project.name)
-                                        .font(.body)
-                                        .bold()
-                                        .foregroundColor(.primary)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    if !project.productName.isEmpty
-                                    {
-                                        Text("商品: \(project.productName)")
-                                            .font(.footnote)
-                                            .foregroundColor(.secondary)
-                                            .padding(.top, 4)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                    }
-                                    
-                                    //期限表示
-                                    if let deadlineText = project.deadlineText {
-                                        HStack {
-                                            Spacer()
-                                            Text(deadlineText)
-                                                .font(.caption2)
-                                                .foregroundColor(.gray)
-                                        }
-                                        .padding(.top, 4)
-                                    }
-                                }
+                                ProjectCardContent(project: project)
                             }
                             .padding()
                         }
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
-                        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                        .cardStyle()
                     }
                 }
                 .padding(.horizontal, 20)
