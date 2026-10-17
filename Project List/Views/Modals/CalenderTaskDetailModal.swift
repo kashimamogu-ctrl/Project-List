@@ -59,9 +59,7 @@ struct CalenderTaskDetailModal: View
                                 {
                                     // ↓ここから案件一覧
                                     ForEach(filteredProjects) { project in
-                                        NavigationLink {
-                                            ProjectDetailView(project: project)
-                                        } label: {
+                                        NavigationLink (value: project) {
                                             HStack
                                             {
                                                 VStack(alignment: .leading, spacing: 4)

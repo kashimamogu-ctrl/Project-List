@@ -29,7 +29,16 @@ struct CalendarView: View
     
     // 開始曜日の設定（1 = 日曜日, 2 = 月曜日）
     @AppStorage("firstWeekday") private var firstWeekday = 2 // 「１」なら日曜始まり
+    
+    // ContentView から受け取る、今選ばれているタブ
+    // ContentView から受け取る、タブを切り替えた回数
+    let tabChangeCount: Int
 
+    init(tabChangeCount: Int = 0)
+    {
+        self.tabChangeCount = tabChangeCount
+    }
+    
     private static let daysInWeek = 7 // 1週間の日数
     private static let calendarRowCount = 6 // カレンダーの行数
     private let totalCalendarGridCount = daysInWeek * calendarRowCount
@@ -41,26 +50,6 @@ struct CalendarView: View
         let shift = firstWeekday - 1
         return Array(base[shift...] + base[..<shift])
     }
-    
-//    // 7列の固定グリッド
-//    private var columns: [GridItem]
-//    {
-//        Array(repeating: GridItem(.flexible(), spacing: 0), count: Self.daysInWeek)
-//    }
-    
-//    // 特定の日付に該当するプロジェクトとバー位置を取得
-//    private func projectSegments(for date: Date) -> [CalendarProjectSegment]
-//    {
-//        return projects.compactMap { project in
-//            guard let position = project.barPosition(for: date) else { return nil }
-//            return CalendarProjectSegment(
-//                id: project.id.hashValue.description,
-//                name: project.name,
-//                status: project.status,
-//                position: position
-//            )
-//        }
-//    }
     
     var body: some View
     {
@@ -167,12 +156,25 @@ struct CalendarView: View
                 .transition(.scale(scale: 0.9).combined(with: .opacity))
             }
         }
+        // モーダルから案件詳細へ移動する
+        .navigationDestination(for: Project.self)
+        { project in
+            ProjectDetailView(project: project)
+        }
         .navigationTitle("カレンダー")
         .navigationBarTitleDisplayMode(.inline)
         .animation(.easeInOut(duration: 0.2), value: selectedDay)
         .onAppear { updateCalendarDays() }
         .onChange(of: currentMonth) { updateCalendarDays() }
         .onChange(of: firstWeekday) { updateCalendarDays() }
+        .onChange(of: tabChangeCount) {
+            // タブ切り替えのときは、アニメーションなしで閉じる
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                selectedDay = nil
+            }
+        }
     }
     
     // 特定の日付が締め切りの案件を取得
