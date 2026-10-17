@@ -134,17 +134,36 @@ struct MyPageView: View
 
     private func menuRow(_ title: String) -> some View
     {
-        HStack
-        {
-            Text(title)
-                .font(.subheadline)
-                .bold()
+        NavigationLink {
+            if title == "各種設定"
+            {
+                CalendarSettingsView()
+            }
+            else
+            {
+                MyPagePlaceholderView(title: title)
+            }
+        } label: {
+            HStack {
+                Text(title)
+                    .font(.subheadline)
+                    .bold()
+                    .foregroundStyle(.primary)
 
-            Spacer()
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .background(Color(.systemGray5))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .shadow(
+                color: .black.opacity(0.12),
+                radius: 3,
+                x: 0,
+                y: 2
+            )
         }
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity, minHeight: 44)
-        .background(Color(.systemGray5))
+        .buttonStyle(.plain)
     }
 
     private func sectionTitle(
@@ -248,5 +267,90 @@ struct MyPageView: View
     {
         guard let value else { return "" }
         return "\(value.formatted())\(unit)"
+    }
+    
+    private struct MyPagePlaceholderView: View
+    {
+        let title: String
+
+        var body: some View {
+            Text(title)
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity,
+                    alignment: .topLeading
+                )
+                .padding()
+        }
+    }
+    
+    //月曜始まり、日曜始まりの設定用
+    private struct CalendarSettingsView: View
+    {
+        @AppStorage("firstWeekday") private var firstWeekday = 2
+
+        var body: some View
+        {
+            Form
+            {
+                Section("カレンダー")
+                {
+                    HStack {
+                        Text("週の始まり")
+
+                        Spacer()
+
+                        Menu
+                        {
+                            Button{
+                                firstWeekday = 1
+                            } label: {
+                                if firstWeekday == 1 {
+                                    Label("日曜", systemImage: "checkmark")
+                                } else {
+                                    Text("日曜")
+                                }
+                            }
+
+                            Button {
+                                firstWeekday = 2
+                            } label: {
+                                if firstWeekday == 2 {
+                                    Label("月曜", systemImage: "checkmark")
+                                } else {
+                                    Text("月曜")
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text(firstWeekday == 1 ? "日曜" : "月曜")
+
+                                Spacer(minLength: 8)
+
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.caption)
+                            }
+                            .padding(.horizontal, 8)
+                            .frame(width: 130, height: 36)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        .tint(.primary)
+                    }
+                }
+                
+                Section("アプリの共有")
+                {
+                    ShareLink(item: "無償ギフティング特化型のシンプルな案件管理アプリです") {
+                        Label(
+                            "友だちに薦める",
+                            systemImage: "square.and.arrow.up"
+                        )
+                    }
+                }
+            }
+            .navigationTitle("各種設定")
+            .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }

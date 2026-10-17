@@ -86,7 +86,8 @@ struct CalendarWeekRowView: View
                 // その上に、期間に応じた幅の案件バーを重ねる
                 ForEach(weekBars) { bar in
                     let numberOfCells = bar.endIndex - bar.startIndex + 1
-                    let barWidth = cellWidth * CGFloat(numberOfCells)
+                    let barSideInset: CGFloat = 3
+                    let barWidth = cellWidth * CGFloat(numberOfCells) - barSideInset * 2
 
                     HStack(spacing: 0)
                     {

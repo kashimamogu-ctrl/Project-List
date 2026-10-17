@@ -172,6 +172,7 @@ struct CalendarView: View
         .animation(.easeInOut(duration: 0.2), value: selectedDay)
         .onAppear { updateCalendarDays() }
         .onChange(of: currentMonth) { updateCalendarDays() }
+        .onChange(of: firstWeekday) { updateCalendarDays() }
     }
     
     // 特定の日付が締め切りの案件を取得

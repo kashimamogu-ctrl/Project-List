@@ -38,11 +38,14 @@ struct ContentView: View
                     Text("ブランド")
                 }
             
-            MyPageView()
-                .tabItem {
-                    Label("マイページ", systemImage: "person.fill")
-                }
-                .tag(3)
+            NavigationStack
+            {
+                MyPageView()
+            }
+            .tabItem {
+                Label("マイページ", systemImage: "person.fill")
+            }
+            .tag(3)
         }
 
         .onAppear {
