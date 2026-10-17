@@ -19,10 +19,20 @@ struct ProjectDetailView: View
     @State private var selectedType: ProjectType = .gifting
     @State private var hasDuty: Bool = false
     @State private var deadline: Date = Date()
+    @State private var hasDeadline: Bool = true
+    @State private var isRange: Bool = false
+    @State private var startline: Date = Date()
     @State private var note: String = ""
+    @State private var isShowingDeleteAlert = false // 削除用のアラート管理
     
-    // 削除用のアラート管理
-    @State private var isShowingDeleteAlert = false
+    @Query private var brands: [Brand]
+
+    // 入力中のブランド名に一致する既存ブランド
+    private var existingBrand: Brand?
+    {
+        let trimmedName = ProjectInputRules.trimmed(brandName)
+        return brands.first { $0.name == trimmedName }
+    }
     
     // バリデーション：必須項目が埋まっているか
     private var isValid: Bool
@@ -58,18 +68,32 @@ struct ProjectDetailView: View
                     }
                     
                     editableSection(title: "ブランドジャンル", isRequired: true) {
-                        Menu {
-                            ForEach(BrandGenre.allCases) { genre in
-                                Button(genre.rawValue) { selectedGenre = genre }
+                        if let existingBrand
+                        {
+                            // 既存ブランドのジャンルは表示のみ（変更はブランド編集画面で）
+                            dropdownLabel(text: existingBrand.genre.rawValue)
+                                .opacity(0.6)
+                            Text("登録済みのブランドです。ジャンルはブランド画面で変更できます。")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        else
+                        {
+                            Menu {
+                                ForEach(BrandGenre.allCases) { genre in
+                                    Button(genre.rawValue) { selectedGenre = genre }
+                                }
+                            } label: {
+                                dropdownLabel(text: selectedGenre.rawValue)
                             }
-                        } label: {
-                            dropdownLabel(text: selectedGenre.rawValue)
                         }
                     }
                 }
                 
-                Section(header: Text("ステータスと条件の編集")) {
-                    editableSection(title: "進捗", isRequired: false) {
+                Section(header: Text("ステータスと条件の編集"))
+                {
+                    editableSection(title: "進捗", isRequired: false)
+                    {
                         Menu {
                             ForEach(ProjectStatus.allCases) { status in
                                 Button(status.rawValue) { selectedStatus = status }
@@ -96,9 +120,42 @@ struct ProjectDetailView: View
                         }
                     }
                     
-                    editableSection(title: "期限", isRequired: false) {
-                        DatePicker("", selection: $deadline, displayedComponents: .date)
-                            .labelsHidden()
+                    editableSection(title: "期限", isRequired: false)
+                    {
+                        Toggle("期限を設定する", isOn: $hasDeadline)
+                    }
+
+                    if hasDeadline
+                    {
+                        VStack(alignment: .leading, spacing: 8)
+                        {
+                            Toggle("期間で指定する", isOn: Binding(
+                                get: { isRange },
+                                set: { newValue in
+                                    isRange = newValue
+                                    // 期間指定をONにしたら、開始日を締切日に揃える
+                                    if newValue { startline = deadline }
+                                }
+                            ))
+                            .toggleStyle(CheckboxToggleStyle())
+
+                            if isRange
+                            {
+                                DatePicker("開始日", selection: $startline, displayedComponents: .date)
+                                    .onChange(of: startline) { _, newValue in
+                                        if newValue > deadline { deadline = newValue }
+                                    }
+
+                                DatePicker("終了日", selection: $deadline, displayedComponents: .date)
+                                    .onChange(of: deadline) { _, newValue in
+                                        if newValue < startline { startline = newValue }
+                                    }
+                            }
+                            else
+                            {
+                                DatePicker("期日", selection: $deadline, displayedComponents: .date)
+                            }
+                        }
                     }
                 }
                 
@@ -108,6 +165,7 @@ struct ProjectDetailView: View
                 }
                 
             }
+            //編集モードではないとき
             else
             {
                 Section(header: Text("基本情報")) {
@@ -119,7 +177,8 @@ struct ProjectDetailView: View
                     }
                 }
                 
-                Section(header: Text("ステータスと条件")) {
+                Section(header: Text("ステータスと条件"))
+                {
                     HStack {
                         Text("進捗")
                         Spacer()
@@ -140,11 +199,9 @@ struct ProjectDetailView: View
                             Text(project.hasDuty ? "あり" : "なし")
                         }
                     }
-                    if let deadlineText = project.deadlineText {
-                        LabeledContent("期限")
-                        {
-                            Text(deadlineText)
-                        }
+                    LabeledContent("期限")
+                    {
+                        Text(project.deadlineText ?? "なし")
                     }
                 }
                 
@@ -210,6 +267,12 @@ struct ProjectDetailView: View
         selectedType = project.projectType
         hasDuty = project.hasDuty
         deadline = project.deadline ?? Date()
+        hasDeadline = project.deadline != nil
+        isRange = project.isRange
+        // 単日の案件は、作成時の古い開始日が残っているので締切日に揃える
+        startline = project.isRange ? (project.startline ?? deadline) : deadline
+        // すでに逆転して保存されている案件を補正する
+        if isRange && startline > deadline { startline = deadline }
         note = project.note
         
         withAnimation { isEditMode = true }
@@ -223,7 +286,9 @@ struct ProjectDetailView: View
         project.status = selectedStatus
         project.projectType = selectedType
         project.hasDuty = hasDuty
-        project.deadline = deadline
+        project.deadline = hasDeadline ? deadline : nil
+        project.isRange = hasDeadline && isRange
+        project.startline = hasDeadline ? startline : nil
         project.note = note
         
         let fetchedBrand = fetchOrCreateBrand(named: brandName, genre: selectedGenre)
@@ -239,7 +304,6 @@ struct ProjectDetailView: View
         
         if let existingBrand = try? modelContext.fetch(descriptor).first
         {
-            existingBrand.genre = genre
             return existingBrand
         }
         else
@@ -296,12 +360,19 @@ private func radioButton(title: String, isSelected: Bool, action: @escaping () -
 
 extension Date
 {
+    // 今年なら「9/23」、今年以外なら「2027/9/23」
     var localizedYMD: String
     {
-        let formatter = DateFormatter()
-        // 端末の設定（日本なら日本、アメリカならアメリカ）の「年月日」スタイルを自動採用
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter.string(from: self)
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: self)
+        let day = calendar.component(.day, from: self)
+
+        if calendar.isDate(self, equalTo: Date(), toGranularity: .year)
+        {
+            return "\(month)/\(day)"
+        }
+
+        let year = calendar.component(.year, from: self)
+        return "\(year)/\(month)/\(day)"
     }
 }

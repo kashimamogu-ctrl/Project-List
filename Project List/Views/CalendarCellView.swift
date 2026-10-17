@@ -104,7 +104,7 @@ struct CalendarWeekRowView: View
                         Spacer(minLength: 0)
                     }
                     .frame(width: barWidth, height: barHeight)
-                    .background(Color(.systemGray4))
+                    .background(bar.status.foregroundColor.opacity(0.25))
                     .clipShape(BarCornerShape(position: bar.position))
                     .allowsHitTesting(false)
                     .position(
@@ -321,7 +321,8 @@ struct CalendarWeekRowView: View
             startIndex: segmentStart,
             endIndex: segmentEnd,
             lane: assignment.lane,
-            position: barPosition
+            position: barPosition,
+            status: assignment.project.status
         )
     }
 }
@@ -356,6 +357,7 @@ private struct WeekProjectBar: Identifiable
     let endIndex: Int
     let lane: Int
     let position: ProjectBarPosition
+    let status: ProjectStatus
 }
 
 // バーの左右の端だけ角を丸めるShape

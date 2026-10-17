@@ -10,6 +10,7 @@ struct BrandProjectListView: View
     
     // 安全な動的削除管理用の部屋
     @State private var isShowingDeleteAlert = false
+    @State private var isShowingEditSheet = false
     
     var body: some View
     {
@@ -31,6 +32,22 @@ struct BrandProjectListView: View
                         infoRow(title: "ブランド名", value: brand.name, isBold: true)
                         Divider().padding(.horizontal)
                         infoRow(title: "ジャンル", value: brand.genre.rawValue, isBold: false)
+
+                        if !brand.note.isEmpty
+                        {
+                            Divider().padding(.horizontal)
+
+                            VStack(alignment: .leading, spacing: 4)
+                            {
+                                Text("メモ")
+                                    .foregroundColor(.secondary)
+                                Text(brand.note)
+                                    .foregroundColor(.primary)
+                            }
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                        }
                     }
                     .background(Color(.systemBackground))
                     .cornerRadius(12)
@@ -112,11 +129,11 @@ struct BrandProjectListView: View
                                             
                                             Spacer()
                                             
-                                            if let deadline = project.deadline
+                                            if let deadlineText = project.deadlineText
                                             {
-                                                Text(deadline, format: .dateTime.year().month().day())
+                                                Text(deadlineText)
                                                     .font(.caption2)
-                                                    .foregroundColor(.gray)
+                                                    .foregroundColor(.black)
                                             }
                                         }
                                         .padding(.top, 2)
@@ -146,6 +163,7 @@ struct BrandProjectListView: View
                     }
                     .font(.body)
                     .bold()
+                    .foregroundColor(.red)
                     .padding()
                     .background(Color(.systemBackground))
                     .cornerRadius(12)
@@ -162,6 +180,14 @@ struct BrandProjectListView: View
         .background(Color(.systemGray6))
         .navigationTitle(brand.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("編集") { isShowingEditSheet = true }
+            }
+        }
+        .sheet(isPresented: $isShowingEditSheet) {
+            BrandEditView(brand: brand)
+        }
         .alert("ブランドの削除", isPresented: $isShowingDeleteAlert)
         {
             Button("キャンセル", role: .cancel) {}

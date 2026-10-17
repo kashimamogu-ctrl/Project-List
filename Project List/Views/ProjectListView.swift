@@ -6,7 +6,7 @@ import SwiftData
 struct ProjectListView: View
 {
     @Environment(\.modelContext) private var modelContext
-    @Query private var projects: [Project]
+    @Query(sort: [SortDescriptor(\Project.deadline)]) private var projects: [Project] // 期限が近い順に並べる
     
     @State private var isShowingSheet = false
     @State private var viewModel = ProjectListViewModel()
@@ -256,15 +256,21 @@ struct ProjectListView: View
         }
     }
     
+    // 期限なしの案件は一番下に並べる
+    private var sortedProjects: [Project]
+    {
+        projects.filter { $0.deadline != nil } + projects.filter { $0.deadline == nil }
+    }
+    
     private var filteredProjects: [Project]
     {
         if let filterStatus = selectedFilterStatus
         {
-            return projects.filter { $0.status == filterStatus }
+            return sortedProjects.filter { $0.status == filterStatus }
         }
         else
         {
-            return projects
+            return sortedProjects
         }
     }
 }

@@ -21,10 +21,27 @@ struct AddProjectView: View
     @State private var selectedStatus: ProjectStatus = .applied   // 初期値：応募済
     @State private var selectedType: ProjectType = .gifting       // 初期値：ギフティング
     @State private var hasDuty: Bool = false
+    @State private var hasDeadline = true
     @State private var isRange = false
     @State private var startline: Date = Date()
     @State private var deadline: Date = Date()
     @State private var note: String = ""
+    @Query private var brands: [Brand]
+    
+    // 入力中のブランド名に一致する既存ブランド
+    private var existingBrand: Brand?
+    {
+        let trimmedName = ProjectInputRules.trimmed(brandName)
+        return brands.first { $0.name == trimmedName }
+    }
+    
+    // 期日の初期値を外から渡せるようにする（渡さなければ今日）
+    init(isPresented: Binding<Bool>, initialDate: Date = Date())
+    {
+        self._isPresented = isPresented
+        self._startline = State(initialValue: initialDate)
+        self._deadline = State(initialValue: initialDate)
+    }
     
     // バリデーション：必須項目がすべて埋まっているかと、文字数制限内に収まっているか
     private var isValid: Bool
@@ -32,7 +49,7 @@ struct AddProjectView: View
         ProjectInputRules.isValidRequired(name, maxLength: ProjectInputRules.nameMaxLength)
         && ProjectInputRules.isValidRequired(brandName, maxLength: ProjectInputRules.brandNameMaxLength)
         && ProjectInputRules.isWithinLimit(productName, maxLength: ProjectInputRules.productNameMaxLength)
-        && selectedGenre != nil
+        && (existingBrand != nil || selectedGenre != nil)
     }
     
     var body: some View
@@ -100,17 +117,29 @@ struct AddProjectView: View
                     // ブランドジャンル（選択）
                     inputSection(title: "ブランドジャンル", isRequired: true)
                     {
-                        Menu
+                        if let existingBrand
                         {
-                            ForEach(BrandGenre.allCases)
-                            { genre in
-                                Button(genre.rawValue)
-                                {
-                                    selectedGenre = genre
+                            // 既存ブランドのジャンルは表示のみ（変更はブランド編集画面で）
+                            customDropdownLabel(text: existingBrand.genre.rawValue, isSelected: true)
+                                .opacity(0.6)
+                            Text("登録済みのブランドです。ジャンルはブランド画面で変更できます。")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        else
+                        {
+                            Menu
+                            {
+                                ForEach(BrandGenre.allCases)
+                                { genre in
+                                    Button(genre.rawValue)
+                                    {
+                                        selectedGenre = genre
+                                    }
                                 }
+                            }label:{
+                                customDropdownLabel(text: selectedGenre?.rawValue ?? "選択してください", isSelected: selectedGenre != nil)
                             }
-                        }label:{
-                            customDropdownLabel(text: selectedGenre?.rawValue ?? "選択してください", isSelected: selectedGenre != nil)
                         }
                     }
                     
@@ -165,33 +194,41 @@ struct AddProjectView: View
                     // 期限(日付型)
                     Section(header: Text("案件期限"))
                     {
-                        // 期間指定のチェックボックス / トグル
-                        Toggle("期間で指定する", isOn: $isRange)
-                            .onChange(of: isRange) { oldValue, newValue in
-                                // 期間指定がONになった際、開始日が終了日より後なら補正
-                                if newValue && startline > deadline {startline = deadline }
+                        Toggle("期限を設定する", isOn: $hasDeadline)
+
+                        if hasDeadline
+                        {
+                            VStack(alignment: .leading, spacing: 8)
+                            {
+                                Toggle("期間で指定する", isOn: $isRange)
+                                    .toggleStyle(CheckboxToggleStyle())
+                                    .onChange(of: isRange) { oldValue, newValue in
+                                        // 期間指定がONになった際、開始日が終了日より後なら補正
+                                        if newValue && startline > deadline { startline = deadline }
+                                    }
+
+                                if isRange
+                                {
+                                    DatePicker("開始日", selection: $startline, displayedComponents: .date)
+                                        .environment(\.locale, Locale(identifier: "ja_JP"))
+                                        .onChange(of: startline) { _, newValue in
+                                            handleStartDateChange(newDate: newValue)
+                                        }
+
+                                    DatePicker("終了日", selection: $deadline, displayedComponents: .date)
+                                        .environment(\.locale, Locale(identifier: "ja_JP"))
+                                        .onChange(of: deadline) { _, newValue in
+                                            handleDeadlineChange(newDate: newValue)
+                                        }
+                                }
+                                else
+                                {
+                                    DatePicker("期日", selection: $deadline, displayedComponents: .date)
+                                        .environment(\.locale, Locale(identifier: "ja_JP"))
+                                }
                             }
-                        
-                        if isRange
-                        {
-                            // 期間指定が有効な場合：開始日 ＆ 終了日
-                            DatePicker("開始日", selection: $startline, displayedComponents: .date)
-                                .environment(\.locale, Locale(identifier: "ja_JP")) // 日本語表記対応
-                                .onChange(of: startline) { _, newValue in
-                                    handleStartDateChange(newDate: newValue)
-                                }
-                            
-                            DatePicker("終了日", selection: $deadline, displayedComponents: .date)
-                                .environment(\.locale, Locale(identifier: "ja_JP")) // 日本語表記対応
-                                .onChange(of: deadline) { _, newValue in
-                                    handleDeadlineChange(newDate: newValue)
-                                }
-                        }
-                        else
-                        {
-                            // 単日の場合：終了日（deadline）のみ表示
-                            DatePicker("期日", selection: $deadline, displayedComponents: .date)
-                                .environment(\.locale, Locale(identifier: "ja_JP")) // 日本語表記対応
+                            // 「期限を設定する」と離して、誤タップを防ぐ
+                            .padding(.top, 12)
                         }
                     }
                     
@@ -255,7 +292,8 @@ struct AddProjectView: View
     }
     
     // カスタムラジオボタン
-    private func radioButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+    private func radioButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View
+    {
         Button(action: action) {
             HStack(spacing: 6) {
                 ZStack {
@@ -279,9 +317,7 @@ struct AddProjectView: View
     // 保存ロジック
     private func saveProject()
     {
-        guard let genre = selectedGenre else { return }
-        
-        let fetchedBrand = fetchOrCreateBrand(named: brandName, genre: genre)
+        let fetchedBrand = fetchOrCreateBrand(named: brandName, genre: selectedGenre ?? .other)
         
         let newProject = Project(
             name: ProjectInputRules.trimmed(name),
@@ -290,9 +326,9 @@ struct AddProjectView: View
             status: selectedStatus,
             projectType: selectedType,
             hasDuty: hasDuty,
-            isRange: isRange,
-            startline: startline,
-            deadline: deadline,
+            isRange: hasDeadline && isRange,
+            startline: hasDeadline ? startline : nil,
+            deadline: hasDeadline ? deadline : nil,
             note: note
         )
         
@@ -311,9 +347,8 @@ struct AddProjectView: View
         )
         
         if let existingBrand = try? modelContext.fetch(descriptor).first {
-            existingBrand.genre = genre
             return existingBrand
-        } else {
+        }else {
             let newBrand = Brand(
                 name: trimmedName,
                 genre: genre.rawValue,

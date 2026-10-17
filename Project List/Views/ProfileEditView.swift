@@ -57,6 +57,7 @@ struct ProfileEditView: View
                         Spacer()
 
                         TextField("入力", text: $heightText)
+                            .keyboardType(.decimalPad)
                             .inputBoxStyle()
 
                         Text("cm")
@@ -68,6 +69,7 @@ struct ProfileEditView: View
                         Spacer()
 
                         TextField("入力", text: $weightText)
+                            .keyboardType(.decimalPad)
                             .inputBoxStyle()
                         
                         Text("kg")
@@ -234,8 +236,8 @@ struct ProfileEditView: View
     private func loadProfile()
     {
         name = profile?.name ?? ""
-        heightText = profile?.heightCm.map { String($0) } ?? ""
-        weightText = profile?.weightKg.map { String($0) } ?? ""
+        heightText = profile?.heightCm.map { $0.formatted() } ?? ""
+        weightText = profile?.weightKg.map { $0.formatted() } ?? ""
         boneType = profile?.boneType ?? ""
         personalColor = profile?.personalColor ?? ""
         faceType = profile?.faceType ?? ""
@@ -252,6 +254,16 @@ struct ProfileEditView: View
             accountURLs[account.platform] = account.profileURL
         }
     }
+    
+    // 「160cm」「１６０」「52,5」などから数値を取り出す
+    private func parseNumber(_ text: String) -> Double?
+    {
+        let halfWidth = text.applyingTransform(.fullwidthToHalfwidth, reverse: false) ?? text
+        let filtered = halfWidth
+            .replacingOccurrences(of: ",", with: ".")
+            .filter { ("0"..."9").contains($0) || $0 == "." }
+        return Double(filtered)
+    }
 
     private func saveProfile()
     {
@@ -265,8 +277,8 @@ struct ProfileEditView: View
         }
 
         savedProfile.name = name
-        savedProfile.heightCm = Double(heightText)
-        savedProfile.weightKg = Double(weightText)
+        savedProfile.heightCm = parseNumber(heightText)
+        savedProfile.weightKg = parseNumber(weightText)
         savedProfile.boneType = boneType
         savedProfile.personalColor = personalColor
         savedProfile.faceType = faceType

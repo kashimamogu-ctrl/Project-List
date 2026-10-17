@@ -29,10 +29,7 @@ struct CalenderTaskDetailModal: View
                 // ヘッダー部分
                 HStack
                 {
-                    //TODO：数値に変更して表示は英語と日本語表記の2パターンにする
-                    Text("\(day.date.formatted(.dateTime.month().day())) の予定")
-                        .font(.headline)
-                        .bold()
+                    Text("\(day.date.localizedYMD) の予定")
                     
                     Spacer()
                     
@@ -47,54 +44,45 @@ struct CalenderTaskDetailModal: View
                 .padding()
                 .background(Color(.systemGray6))
                 
-                VStack(alignment: .leading, spacing: 16)
-                {
-                    ScrollView
-                    {
-                        VStack(spacing: 12)
-                        {
-                            ScrollView
-                            {
-                                VStack(spacing: 12)
-                                {
-                                    // ↓ここから案件一覧
-                                    ForEach(filteredProjects) { project in
-                                        NavigationLink (value: project) {
-                                            HStack
-                                            {
-                                                VStack(alignment: .leading, spacing: 4)
-                                                {
-                                                    Text(project.brand?.name ?? "ブランド未設定")
-                                                        .font(.caption)
-                                                        .foregroundColor(.gray)
-                                                    
-                                                    Text(project.name)
-                                                        .font(.body)
-                                                        .fontWeight(.semibold)
-                                                }
-                                                
-                                                Spacer()
-                                                
-                                                // ステータスバッジなどの表示
-                                                Text(project.status.rawValue)
-                                                    .font(.caption2)
-                                                    .padding(.horizontal, 8)
-                                                    .padding(.vertical, 4)
-                                                    .background(Color.blue.opacity(0.1))
-                                                    .foregroundColor(.blue)
-                                                    .cornerRadius(4)
-                                            }
-                                            .padding()
-                                            .background(Color(.systemGray6))
-                                            .cornerRadius(10)
-                                            .contentShape(Rectangle())
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-                                }
-                            }
-                        }
-                    }
+                ScrollView
+               {
+                   VStack(spacing: 12)
+                   {
+                       // ↓ここから案件一覧
+                       ForEach(filteredProjects) { project in
+                           NavigationLink (value: project) {
+                               HStack
+                               {
+                                   VStack(alignment: .leading, spacing: 4)
+                                   {
+                                       Text(project.brand?.name ?? "ブランド未設定")
+                                           .font(.caption)
+                                           .foregroundColor(.gray)
+                                       
+                                       Text(project.name)
+                                           .font(.body)
+                                           .fontWeight(.semibold)
+                                   }
+                                   
+                                   Spacer()
+                                   
+                                   // ステータスバッジなどの表示
+                                   Text(project.status.rawValue)
+                                       .font(.caption2)
+                                       .padding(.horizontal, 8)
+                                       .padding(.vertical, 4)
+                                       .background(project.status.backgroundColor)
+                                       .foregroundColor(project.status.foregroundColor)
+                                       .cornerRadius(4)
+                               }
+                               .padding()
+                               .background(Color(.systemGray6))
+                               .cornerRadius(10)
+                               .contentShape(Rectangle())
+                           }
+                           .buttonStyle(.plain)
+                       }
+                   }
                 }
                 .padding()
                 .frame(maxHeight: 200)
@@ -131,7 +119,7 @@ struct CalenderTaskDetailModal: View
                     withAnimation { isShowingSheet = false }
                 }
             
-            AddProjectView(isPresented: $isShowingSheet)
+            AddProjectView(isPresented: $isShowingSheet, initialDate: day.date)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 40)
                 .transition(.scale(scale: 0.95).combined(with: .opacity))

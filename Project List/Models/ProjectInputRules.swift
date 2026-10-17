@@ -46,3 +46,26 @@ struct CharacterCountText: View
     }
 }
 
+// チェックボックス型のトグル
+struct CheckboxToggleStyle: ToggleStyle
+{
+    func makeBody(configuration: Configuration) -> some View
+    {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
+            HStack(spacing: 8)
+            {
+                Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
+                    .foregroundStyle(configuration.isOn ? Color.accentColor : Color.secondary)
+
+                configuration.label
+                    .foregroundColor(.primary)
+
+                Spacer()
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
