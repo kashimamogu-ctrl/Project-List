@@ -267,14 +267,7 @@ struct ProfileEditView: View
 
     private func saveProfile()
     {
-        let savedProfile: UserProfile
-
-        if let profile {
-            savedProfile = profile
-        } else {
-            savedProfile = UserProfile()
-            modelContext.insert(savedProfile)
-        }
+        let savedProfile = profile ?? modelContext.fetchOrCreateProfile()
 
         savedProfile.name = name
         savedProfile.heightCm = parseNumber(heightText)

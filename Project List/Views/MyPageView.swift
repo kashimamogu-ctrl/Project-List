@@ -255,12 +255,10 @@ struct MyPageView: View
             
     private func saveMemo(_ text: String)
     {
-        if let profile {
-            profile.memo = text
-        } else if !text.isEmpty {
-            let newProfile = UserProfile(memo: text)
-            modelContext.insert(newProfile)
-        }
+        // 何も入力していないのにプロフィールを作らないようにする
+        if profile == nil && text.isEmpty { return }
+
+        modelContext.fetchOrCreateProfile().memo = text
     }
 
     private func measurementText(_ value: Double?, unit: String) -> String

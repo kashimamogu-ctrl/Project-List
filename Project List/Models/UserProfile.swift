@@ -62,3 +62,19 @@ final class ExternalAccount
         self.profile = profile
     }
 }
+
+extension ModelContext
+{
+    // プロフィールを返す。まだなければ新しく作る（プロフィールは1件だけの前提）
+    func fetchOrCreateProfile() -> UserProfile
+    {
+        if let profile = try? fetch(FetchDescriptor<UserProfile>()).first
+        {
+            return profile
+        }
+
+        let newProfile = UserProfile()
+        insert(newProfile)
+        return newProfile
+    }
+}
