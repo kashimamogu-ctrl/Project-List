@@ -63,7 +63,7 @@ struct ProjectListView: View
                             // 1. 【最奥】通常モード時のみ、裏側に透明なボタンとしてNavigationLinkを配置
                             if !isEditMode
                             {
-                                NavigationLink(destination: ProjectDetailView(project: project))
+                                NavigationLink(value: project)
                                 {
                                     Color.clear // 完全に透明な下地。これで文字が薄くなるのを100%防ぎます
                                 }
@@ -184,6 +184,9 @@ struct ProjectListView: View
         }
         .navigationTitle("案件一覧")
         // タブを切り替えたら新規作成ポップアップを閉じる
+        .navigationDestination(for: Project.self) { project in
+            ProjectDetailView(project: project)
+        }
         .onDisappear {
             isShowingSheet = false
         }

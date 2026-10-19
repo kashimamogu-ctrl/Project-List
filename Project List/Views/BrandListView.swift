@@ -82,6 +82,9 @@ struct BrandListView: View
         .navigationTitle("ブランド一覧")
         .navigationDestination(for: Brand.self) { selectedBrand in
             BrandProjectListView(brand: selectedBrand)
+            .navigationDestination(for: Project.self) { project in
+                ProjectDetailView(project: project)
+            }
         }
     }
 }

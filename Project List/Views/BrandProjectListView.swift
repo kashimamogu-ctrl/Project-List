@@ -81,7 +81,7 @@ struct BrandProjectListView: View
                     {
                         ForEach(brand.projects)
                         { project in
-                            NavigationLink(destination: ProjectDetailView(project: project))
+                            NavigationLink(value: project)
                             {
                                 ProjectCardContent(project: project)
                                     .padding()
