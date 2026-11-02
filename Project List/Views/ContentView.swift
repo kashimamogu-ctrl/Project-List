@@ -65,7 +65,6 @@ struct ContentView: View
                 UITabBar.appearance().scrollEdgeAppearance = appearance
                 UITabBar.appearance().standardAppearance = appearance
             }
-            .accentColor(.blue)
             AdBannerView()
         }
     }
