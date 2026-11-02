@@ -12,13 +12,12 @@ struct StatusBadge: View
     var body: some View
     {
         Text(status.label)
-            .font(.caption)
-            .bold()
+            .font(.caption.weight(.medium))
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(status.backgroundColor)
-            .foregroundColor(status.foregroundColor)
-            .cornerRadius(AppTheme.tagCornerRadius)
+            .foregroundColor(status.textColor)
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.small))
     }
 }
 
@@ -30,16 +29,31 @@ struct BrandTag: View
     var body: some View
     {
         Text(name)
-            .font(.caption)
-            .bold()
+            .font(.caption.weight(.medium))
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(AppTheme.brandTagBackground)
-            .foregroundColor(AppTheme.brandTagForeground)
-            .cornerRadius(AppTheme.tagCornerRadius)
+            .background(AppTheme.surface)
+            .foregroundColor(AppTheme.accent)
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.small))
     }
 }
 
+// ブランドジャンルのタグ（コスメ・スキンケアなど）
+struct GenreTag: View
+{
+    let genre: BrandGenre
+
+    var body: some View
+    {
+        Text(genre.label)
+            .font(.caption2)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(AppTheme.surface)
+            .foregroundColor(AppTheme.subText)
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.small))
+    }
+}
 // 案件カードの中身（リストとブランド詳細で共通）
 struct ProjectCardContent: View
 {

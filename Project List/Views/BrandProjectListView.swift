@@ -118,7 +118,7 @@ struct BrandProjectListView: View
             .padding(.top, 16)
             .frame(maxWidth: .infinity)
         }
-        .background(Color(.systemGray6))
+        .background(AppTheme.background)
         .navigationTitle(brand.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

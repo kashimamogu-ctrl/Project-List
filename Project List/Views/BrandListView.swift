@@ -20,8 +20,8 @@ struct BrandListView: View
                     {
                         Text("ブランドがありません")
                             .font(.subheadline)
-                            .bold()
-                            .foregroundColor(.secondary)
+                            .fontWeight(.semibold)
+                            .foregroundColor(AppTheme.subText)
                         
                         Text("案件一覧から新しいブランドを入力して案件を作成すると、ここに自動で追加されます。")
                             .font(.caption)
@@ -44,24 +44,17 @@ struct BrandListView: View
                                 {
                                     Text(brand.name)
                                         .font(.body)
-                                        .bold()
-                                        .foregroundColor(.primary)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(AppTheme.text)
                                     
-                                    Text(brand.genre.label)
-                                        .font(.caption2)
-                                        .bold()
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(AppTheme.genreTagBackground)
-                                        .foregroundColor(.secondary)
-                                        .cornerRadius(AppTheme.tagCornerRadius)
+                                    GenreTag(genre: brand.genre)
                                 }
                                 
                                 Spacer()
                                 
                                 Text("\(brand.projects.count) 件の案件")
                                     .font(.footnote)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(AppTheme.subText)
                                 
                                 Image(systemName: "chevron.right")
                                     .font(.footnote)
@@ -79,6 +72,7 @@ struct BrandListView: View
             .padding(.top, 16)
             .frame(maxWidth: .infinity)
         }
+        .background(AppTheme.background)
         .navigationTitle("ブランド一覧")
         .navigationDestination(for: Brand.self) { selectedBrand in
             BrandProjectListView(brand: selectedBrand)

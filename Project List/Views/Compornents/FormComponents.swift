@@ -246,6 +246,14 @@ extension View
             Button("保存する") {}.buttonStyle(PrimaryButtonStyle())
             Button("キャンセル") {}.buttonStyle(SecondaryButtonStyle())
             FloatingAddButton {}
+            
+            Text("進捗バッジ").font(.appSection)
+            HStack
+            {
+                ForEach(ProjectStatus.allCases) { status in
+                    StatusBadge(status: status)
+                }
+            }
 
             Text("チップ").font(.appSection)
             HStack

@@ -163,6 +163,7 @@ struct ProjectListView: View
                     .transition(.scale(scale: 0.95).combined(with: .opacity))
             }
         }
+        .background(AppTheme.background)
         .navigationTitle("案件一覧")
         // タブを切り替えたら新規作成ポップアップを閉じる
         .navigationDestination(for: Project.self) { project in

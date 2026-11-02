@@ -28,21 +28,34 @@ enum ProjectStatus: String, CaseIterable, Identifiable, StoredOption
         }
     }
     
+    // 進捗の流れが色でわかるようにする
     var foregroundColor: Color
     {
         switch self
         {
-        case .applied:   return .gray          // 応募済：グレー
-        case .waiting:   return .gray        // 待ち：グレー
-        case .progress:  return .blue         // 進行中：ブルー
-        case .completed: return .green         // 完了：グリーン
+        case .applied:   return AppTheme.subText     // 応募済：まだ始まっていない
+        case .waiting:   return AppTheme.main        // 待ち：もうすぐ動き出す
+        case .progress:  return AppTheme.progress    // 進行中：今やっている
+        case .completed: return AppTheme.completed   // 完了：終わった
         }
     }
 
-    //背景色は各カラーを薄くした色
+    // バッジの文字色（小さい文字でも読みやすいように濃いめ）
+    var textColor: Color
+    {
+        switch self
+        {
+        case .applied:   return AppTheme.appliedText
+        case .waiting:   return AppTheme.accent
+        case .progress:  return AppTheme.progressText
+        case .completed: return AppTheme.completedText
+        }
+    }
+
+    // バッジの背景色は各色を薄くした色
     var backgroundColor: Color
     {
-        self.foregroundColor.opacity(0.12)
+        self.foregroundColor.opacity(0.15)
     }
 }
 
