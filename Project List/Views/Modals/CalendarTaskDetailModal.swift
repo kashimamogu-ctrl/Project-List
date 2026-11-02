@@ -57,7 +57,7 @@ struct CalendarTaskDetailModal: View
                                    {
                                        Text(project.brand?.name ?? "ブランド未設定")
                                            .font(.caption)
-                                           .foregroundColor(.gray)
+                                           .foregroundColor(AppTheme.subText)
                                        
                                        Text(project.name)
                                            .font(.body)
@@ -93,17 +93,10 @@ struct CalendarTaskDetailModal: View
             .padding(.horizontal, 24)
             
             // 新規案件作成用＋ボタン
-            Button(action:
-                    {
+            FloatingAddButton {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     isShowingSheet = true
                 }
-            }) {
-                Image(systemName: "plus.circle.fill")
-                    .resizable()
-                    .frame(width: 52, height: 52)
-                    .foregroundColor(.blue)
-                    .shadow(radius: 4)
             }
             .padding(.bottom, 8)
             .padding(.trailing, 32)

@@ -8,11 +8,11 @@ enum AppTheme
 {
     // MARK: 色
     static let background = Color(hex: 0xFBF7F5)   // 背景
-    static let card       = Color.white            // カード（※白のままでいいか確認）
+    static let card       = Color.white            // カード
     static let surface    = Color(hex: 0xF1E3E8)   // 面色（タグ・選択前のチップなど）
     static let main       = Color(hex: 0xD887A0)   // メイン
     static let accent     = Color(hex: 0xA3506A)   // アクセント（ピンク系）
-    static let progress  = Color(hex: 0x5095A3)   // アクセント（ブルー系）※使う場所を決める
+    static let progress  = Color(hex: 0x5095A3)   // 進行カラー（ブルー系）
     static let text       = Color(hex: 0x433A3D)   // 本文
     static let subText    = Color(hex: 0x897D82)   // 補助文字
     static let line       = Color(hex: 0xEEE5E6)   // 線（区切り・入力欄の枠）

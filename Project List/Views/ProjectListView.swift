@@ -27,30 +27,17 @@ struct ProjectListView: View
                 {
                     HStack(spacing: 8)
                     {
-                        Button(action: { selectedFilterStatus = nil }) {
-                            Text("すべて")
-                                .font(.footnote).bold()
-                                .padding(.horizontal, 14).padding(.vertical, 8)
-                                .background(selectedFilterStatus == nil ? Color.blue : Color(.systemGray6))
-                                .foregroundColor(selectedFilterStatus == nil ? .white : .primary)
-                                .cornerRadius(16)
+                        FilterChip(title: "すべて", isSelected: selectedFilterStatus == nil) {
+                            selectedFilterStatus = nil
                         }
-                        .buttonStyle(.plain)
-                        
-                        
-                        ForEach(ProjectStatus.allCases){ status in
-                            Button(action: { selectedFilterStatus = status }) {
-                                Text(status.label)
-                                    .font(.footnote).bold()
-                                    .padding(.horizontal, 14).padding(.vertical, 8)
-                                    .background(selectedFilterStatus == status ? Color.blue : Color(.systemGray6))
-                                    .foregroundColor(selectedFilterStatus == status ? .white : .primary)
-                                    .cornerRadius(16)
+
+                        ForEach(ProjectStatus.allCases) { status in
+                            FilterChip(title: status.label, isSelected: selectedFilterStatus == status) {
+                                selectedFilterStatus = status
                             }
-                            .buttonStyle(.plain)
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, AppTheme.Spacing.screen)
                     .padding(.vertical, 10)
                 }
                 
@@ -118,13 +105,13 @@ struct ProjectListView: View
                     }) {
                         Text(isEditMode ? "完了" : "選択削除")
                             .font(.subheadline)
-                            .bold()
-                            .foregroundColor(isEditMode ? .blue : .gray)
+                            .fontWeight(.medium)
+                            .foregroundColor(isEditMode ? AppTheme.accent : AppTheme.subText)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
-                            .background(Color(.systemBackground))
-                            .cornerRadius(20)
-                            .shadow(radius: 2)
+                            .background(AppTheme.card)
+                            .clipShape(Capsule())
+                            .appShadow()
                     }
                     .padding(.leading, 24)
                     .padding(.bottom, 16)
@@ -149,16 +136,10 @@ struct ProjectListView: View
                     }
                     else
                     {
-                        Button(action: {
+                        FloatingAddButton {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 isShowingSheet = true
                             }
-                        }) {
-                            Image(systemName: "plus.circle.fill")
-                                .resizable()
-                                .frame(width: 52, height: 52)
-                                .foregroundColor(.blue)
-                                .shadow(radius: 4)
                         }
                         .padding(.trailing, 24)
                         .padding(.bottom, 16)

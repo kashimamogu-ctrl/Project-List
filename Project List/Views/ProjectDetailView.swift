@@ -51,19 +51,22 @@ struct ProjectDetailView: View
                 Section(header: Text("基本情報の編集")) {
                     FormField(title: "案件名", isRequired: true) {
                         TextField("案件名を入力", text: $name)
-                            .textFieldStyle(.roundedBorder)
+                            .textFieldStyle(.plain)
+                            .appInputStyle()
                         CharacterCountText(text: name, maxLength: ProjectInputRules.nameMaxLength)
                     }
                     
                     FormField(title: "ブランド名", isRequired: true) {
                         TextField("ブランド名を入力", text: $brandName)
-                            .textFieldStyle(.roundedBorder)
+                            .textFieldStyle(.plain)
+                            .appInputStyle()
                         CharacterCountText(text: brandName, maxLength: ProjectInputRules.brandNameMaxLength)
                     }
                     
                     FormField(title: "商品名", isRequired: false) {
                         TextField("商品名を入力", text: $productName)
-                            .textFieldStyle(.roundedBorder)
+                            .textFieldStyle(.plain)
+                            .appInputStyle()
                         CharacterCountText(text: productName, maxLength: ProjectInputRules.productNameMaxLength)
                     }
                     
@@ -75,7 +78,7 @@ struct ProjectDetailView: View
                                 .opacity(0.6)
                             Text("登録済みのブランドです。ジャンルはブランド画面で変更できます。")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(AppTheme.subText)
                         }
                         else
                         {
@@ -171,7 +174,7 @@ struct ProjectDetailView: View
                 
                 Section(header: Text("メモ")) {
                     if project.note.isEmpty {
-                        Text("メモはありません").foregroundColor(.gray).italic()
+                        Text("メモはありません").foregroundColor(AppTheme.subText)
                     } else {
                         Text(project.note).frame(maxWidth: .infinity, alignment: .leading)
                     }

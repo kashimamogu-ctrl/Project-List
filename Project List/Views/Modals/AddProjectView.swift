@@ -1,6 +1,4 @@
 //  案件リスト画面の案件の新規追加用モーダルのポップアップ
-
-
 import SwiftUI
 import SwiftData
 import os
@@ -58,26 +56,24 @@ struct AddProjectView: View
             ZStack
             {//画面上部の表示
                 Text("新規案件作成")
-                    .font(.headline)
-                    .bold()
-                
+                    .font(.appSection)
+
                 HStack
                 {
                     Button("キャンセル")
                     {
                         isPresented = false
                     }
-                    .foregroundColor(.gray)
-                    
+                    .foregroundColor(AppTheme.subText)
+
                     Spacer()
-                    
+
                     Button("作成")
                     {
                         saveProject()
                     }
-                    .font(.headline)
-                    .bold()
-                    .foregroundColor(isValid ? .blue : .gray)
+                    .font(.appButton)
+                    .foregroundColor(isValid ? AppTheme.accent : AppTheme.subText)
                     .disabled(!isValid)
                 }
             }
@@ -93,7 +89,8 @@ struct AddProjectView: View
                     FormField(title: "案件名", isRequired: true)
                     {
                         TextField("例) Apple Love様新作リップ X投稿", text: $name)
-                            .textFieldStyle(.roundedBorder)
+                            .textFieldStyle(.plain)
+                            .appInputStyle()
                         CharacterCountText(text: name, maxLength: ProjectInputRules.nameMaxLength)
                     }
                     
@@ -101,7 +98,8 @@ struct AddProjectView: View
                     FormField(title: "ブランド名", isRequired: true)
                     {
                         TextField("例) Apple Love", text: $brandName)
-                            .textFieldStyle(.roundedBorder)
+                            .textFieldStyle(.plain)
+                            .appInputStyle()
                         CharacterCountText(text: brandName, maxLength: ProjectInputRules.brandNameMaxLength)
                     }
                     
@@ -109,7 +107,8 @@ struct AddProjectView: View
                     FormField(title: "商品名", isRequired: false)
                     {
                         TextField("例) ぽってりリップ 01 ダークチェリー", text: $productName)
-                            .textFieldStyle(.roundedBorder)
+                            .textFieldStyle(.plain)
+                            .appInputStyle()
                         CharacterCountText(text: productName, maxLength: ProjectInputRules.productNameMaxLength)
                     }
                     
@@ -123,7 +122,7 @@ struct AddProjectView: View
                                 .opacity(0.6)
                             Text("登録済みのブランドです。ジャンルはブランド画面で変更できます。")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(AppTheme.subText)
                         }
                         else
                         {
@@ -201,11 +200,10 @@ struct AddProjectView: View
                     FormField(title: "メモ", isRequired: false)
                     {
                         TextEditor(text: $note)
+                            .scrollContentBackground(.hidden)
                             .frame(minHeight: 80)
-                            .padding(4)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color(.systemGray4), lineWidth: 0.5))
+                            .padding(.vertical, 4)
+                            .appInputStyle()
                     }
                 }
                 .padding()

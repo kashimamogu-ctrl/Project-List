@@ -89,18 +89,13 @@ struct DropdownLabel: View
         HStack
         {
             Text(text)
-                .foregroundColor(isPlaceholder ? .gray : .primary)
+                .foregroundColor(isPlaceholder ? AppTheme.subText : AppTheme.text)
             Spacer()
             Image(systemName: "chevron.down")
                 .font(.footnote)
-                .foregroundColor(.gray)
+                .foregroundColor(AppTheme.subText)
         }
-        .padding(10)
-        .background(AppTheme.cardBackground)
-        .overlay(
-            RoundedRectangle(cornerRadius: 6)
-                .stroke(Color(.systemGray4), lineWidth: 1)
-        )
+        .appInputStyle()
     }
 }
 
@@ -131,9 +126,12 @@ struct RadioButton: View
                     }
                 }
                 Text(title)
-                    .font(.body)
+                    .font(.appBody)
                     .foregroundColor(AppTheme.text)
             }
+            // 見た目は小さくても、タップできる範囲は44pt確保する
+            .frame(minHeight: AppTheme.Size.tapTarget)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
