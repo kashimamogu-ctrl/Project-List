@@ -20,7 +20,7 @@ struct MyPageView: View
     {
         ScrollView
         {
-            VStack(alignment: .leading, spacing: 26)
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.section)
             {
                 VStack(spacing: 12)
                 {
@@ -94,7 +94,7 @@ struct MyPageView: View
                 }
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, AppTheme.Spacing.screen)
         .overlay(alignment: .bottom)
         {
             if showingCopyToast
@@ -104,7 +104,7 @@ struct MyPageView: View
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    .background(Color.black.opacity(0.75), in: Capsule())
+                    .background(AppTheme.text.opacity(0.85), in: Capsule())
                     .padding(.bottom, 24)
                     .contentShape(Capsule())
                     .onTapGesture {
@@ -143,22 +143,19 @@ struct MyPageView: View
         } label: {
             HStack {
                 Text(title)
-                    .font(.subheadline)
-                    .bold()
-                    .foregroundStyle(.primary)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(AppTheme.text)
 
                 Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.footnote)
+                    .foregroundStyle(AppTheme.subText)
             }
             .padding(.horizontal, 16)
-            .frame(maxWidth: .infinity, minHeight: 44)
-            .background(Color(.systemGray5))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .shadow(
-                color: .black.opacity(0.12),
-                radius: 3,
-                x: 0,
-                y: 2
-            )
+            .frame(maxWidth: .infinity, minHeight: AppTheme.Size.control)
+            .background(AppTheme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.control))
         }
         .buttonStyle(.plain)
     }
@@ -171,17 +168,19 @@ struct MyPageView: View
         HStack
         {
             Text(title)
-                .font(.headline)
+                .font(.appSection)
 
             Spacer()
 
             if showsEdit
             {
-                Button("編集")
+                Button("一括編集")
                 {
                     isShowingProfileEdit = true
                 }
-                .font(.headline)
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(AppTheme.accent)
+                .frame(minHeight: AppTheme.Size.tapTarget)
             }
         }
     }
@@ -194,6 +193,7 @@ struct MyPageView: View
         HStack {
             Text(title)
                 .font(.subheadline)
+                .foregroundColor(AppTheme.subText)
 
             Spacer()
 
@@ -224,6 +224,8 @@ struct MyPageView: View
                     } label: {
                         Image(systemName: "doc.on.doc")
                             .font(.subheadline)
+                            .foregroundColor(AppTheme.subText)
+                            .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("コピー")
@@ -231,10 +233,10 @@ struct MyPageView: View
             }
         }
         .padding(.horizontal, 14)
-        .frame(height: 44)
+        .frame(minHeight: AppTheme.Size.tapTarget)
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(Color(.separator))
+                .fill(AppTheme.line)
                 .frame(height: 1)
         }
     }
@@ -325,12 +327,10 @@ struct MyPageView: View
                                 Image(systemName: "chevron.up.chevron.down")
                                     .font(.caption)
                             }
-                            .padding(.horizontal, 8)
-                            .frame(width: 130, height: 36)
-                            .background(Color(.secondarySystemBackground))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .frame(width: 100)
+                            .appInputStyle()
                         }
-                        .tint(.primary)
+                        .tint(AppTheme.text)
                     }
                 }
                 
@@ -344,6 +344,7 @@ struct MyPageView: View
                     }
                 }
             }
+            .appFormStyle()
             .navigationTitle("各種設定")
             .navigationBarTitleDisplayMode(.inline)
         }

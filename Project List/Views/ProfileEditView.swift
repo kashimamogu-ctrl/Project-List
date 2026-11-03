@@ -153,8 +153,8 @@ struct ProfileEditView: View
                                         .font(.subheadline)
                                         .foregroundStyle(
                                             selectedSkinTypes.contains(type)
-                                                ? Color.accentColor
-                                                : Color.secondary
+                                                ? AppTheme.main
+                                                : AppTheme.subText
                                         )
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -201,14 +201,12 @@ struct ProfileEditView: View
                             .multilineTextAlignment(.leading)
                             .keyboardType(.URL)
                             .textInputAutocapitalization(.never)
-                            .padding(8)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                            .background(Color(.secondarySystemBackground))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .appInputStyle()
                         }
                     }
                 }
             }
+            .appFormStyle()
             .navigationTitle("プロフィール一括編集")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar
@@ -340,12 +338,10 @@ struct ProfileEditView: View
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.caption)
             }
-            .padding(.horizontal, 8)
-            .frame(width: width, height: 36, alignment: .leading)
-            .background(Color(.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .frame(width: width, alignment: .leading)
+            .appInputStyle()
         }
-        .tint(.primary)
+        .tint(AppTheme.text)
     }
 }
 
@@ -371,9 +367,7 @@ private extension View
         self
             .textFieldStyle(.plain)
             .multilineTextAlignment(.leading)
-            .padding(8)
-            .frame(width: size.width, height: 44)
-            .background(Color(.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .frame(width: size.width)
+            .appInputStyle()
     }
 }

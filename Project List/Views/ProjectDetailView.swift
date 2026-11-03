@@ -141,7 +141,7 @@ struct ProjectDetailView: View
             else
             {
                 Section(header: Text("基本情報")) {
-                    LabeledContent("ブランド名") { Text(project.brand?.name ?? "未設定").bold() }
+                    LabeledContent("ブランド名") { Text(project.brand?.name ?? "未設定").fontWeight(.medium) }
                     LabeledContent("ジャンル") { Text(project.brand?.genre.label ?? "その他") }
                     LabeledContent("案件名") { Text(project.name) }
                     if !project.productName.isEmpty {
@@ -162,7 +162,7 @@ struct ProjectDetailView: View
                         Spacer()
                         HStack(spacing: 4) {
                             Image(systemName: project.hasDuty ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                .foregroundColor(project.hasDuty ? .blue : .gray)
+                                .foregroundColor(project.hasDuty ? AppTheme.main : AppTheme.subText)
                             Text(project.hasDuty ? "あり" : "なし")
                         }
                     }
@@ -190,6 +190,7 @@ struct ProjectDetailView: View
                 }
             }
         }
+        .appFormStyle()
         .navigationTitle(isEditMode ? "案件の編集" : "案件詳細")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

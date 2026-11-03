@@ -310,3 +310,14 @@ extension View
     .fontDesign(.rounded)
     .foregroundStyle(AppTheme.text)
 }
+
+extension View
+{
+    // Form（設定画面のような一覧）の背景をトンマナに合わせる
+    func appFormStyle() -> some View
+    {
+        self
+            .scrollContentBackground(.hidden)   // Form 標準のグレーの背景を消す
+            .background(AppTheme.background)
+    }
+}

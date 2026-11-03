@@ -64,6 +64,7 @@ struct BrandEditView: View
                         .frame(minHeight: 100)
                 }
             }
+            .appFormStyle()
             .navigationTitle("ブランドの編集")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar
