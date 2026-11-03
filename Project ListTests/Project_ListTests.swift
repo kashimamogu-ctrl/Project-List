@@ -137,3 +137,104 @@ struct StoredOptionTests
         #expect(ProjectStatus.fromStored("???") == nil)
     }
 }
+
+// 「〇〇月の残りの案件」に出るかどうか
+struct OverlapsMonthTests
+{
+    let september = makeDate(2026, 9, 1)
+    let october = makeDate(2026, 10, 1)
+
+    @Test("期限がその月の単日案件は出る")
+    func singleDayInMonth()
+    {
+        let project = Project(name: "A", deadline: makeDate(2026, 9, 15))
+        #expect(project.overlaps(month: september))
+        #expect(!project.overlaps(month: october))
+    }
+
+    @Test("月をまたぐ期間の案件は両方の月に出る")
+    func rangeAcrossMonths()
+    {
+        let project = Project(
+            name: "A",
+            isRange: true,
+            startline: makeDate(2026, 9, 28),
+            deadline: makeDate(2026, 10, 3)
+        )
+        #expect(project.overlaps(month: september))
+        #expect(project.overlaps(month: october))
+    }
+
+    @Test("期限なしの案件は出ない")
+    func noDeadline()
+    {
+        #expect(!Project(name: "A").overlaps(month: september))
+    }
+
+    @Test("月末の日の案件も、その月に出る")
+    func lastDayOfMonth()
+    {
+        let project = Project(name: "A", deadline: makeDate(2026, 9, 30))
+        #expect(project.overlaps(month: september))
+        #expect(!project.overlaps(month: october))
+    }
+}
+
+// カレンダーの「＋N」の計算
+struct CalendarWeekLayoutTests
+{
+    // 2026/9/21（月）〜 9/27（日）の1週間
+    let days = (0..<7).map { offset in
+        CalendarDay(
+            date: Calendar.current.date(byAdding: .day, value: offset, to: makeDate(2026, 9, 21))!,
+            isCurrentMonth: true,
+            dayNumber: 21 + offset
+        )
+    }
+
+    // 9/23（週の3日目）が期日の単日案件
+    private func projectOn23rd() -> Project
+    {
+        Project(name: "単日", deadline: makeDate(2026, 9, 23))
+    }
+
+    @Test("同じ日に3件までは「＋N」が出ない")
+    func noOverflowUpToThree()
+    {
+        let layout = CalendarWeekLayout(days: days, projects: (0..<3).map { _ in projectOn23rd() })
+        #expect(layout.bars.count == 3)
+        #expect(layout.hiddenCounts.allSatisfy { $0 == 0 })
+    }
+
+    @Test("同じ日に4件なら、2本表示して「+2」")
+    func overflowWithFour()
+    {
+        let layout = CalendarWeekLayout(days: days, projects: (0..<4).map { _ in projectOn23rd() })
+        #expect(layout.bars.count == 2)
+        #expect(layout.hiddenCounts[2] == 2)
+    }
+
+    @Test("長い案件は1週間ずっと見えて、混んでいる日だけ「＋N」")
+    func longProjectStaysVisible()
+    {
+        let long = Project(
+            name: "長い",
+            isRange: true,
+            startline: makeDate(2026, 9, 21),
+            deadline: makeDate(2026, 9, 27)
+        )
+        let shorts = (0..<3).map { _ in
+            Project(
+                name: "短い",
+                isRange: true,
+                startline: makeDate(2026, 9, 21),
+                deadline: makeDate(2026, 9, 22)
+            )
+        }
+
+        let layout = CalendarWeekLayout(days: days, projects: [long] + shorts)
+
+        #expect(layout.bars.contains { $0.name == "長い" && $0.startIndex == 0 && $0.endIndex == 6 })
+        #expect(layout.hiddenCounts == [2, 2, 0, 0, 0, 0, 0])
+    }
+}
