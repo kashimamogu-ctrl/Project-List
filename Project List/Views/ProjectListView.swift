@@ -104,7 +104,7 @@ struct ProjectListView: View
                         .cardStyle()
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, AppTheme.Spacing.screen)
                 .padding(.top, 16)
             }
             
@@ -140,11 +140,13 @@ struct ProjectListView: View
                         Button(action: {
                             isShowingDeleteAlert = true
                         }) {
-                            Image(systemName: "trash.circle.fill")
-                                .resizable()
+                            Image(systemName: "trash")
+                                .font(.system(size: 22, weight: .medium))
+                                .foregroundColor(.white)
                                 .frame(width: 52, height: 52)
-                                .foregroundColor(.red)
-                                .shadow(radius: 4)
+                                .background(Color.red.opacity(selectedProjectIDs.isEmpty ? 0.4 : 1))
+                                .clipShape(Circle())
+                                .appShadow()
                         }
                         .disabled(selectedProjectIDs.isEmpty)
                         .padding(.trailing, 24)

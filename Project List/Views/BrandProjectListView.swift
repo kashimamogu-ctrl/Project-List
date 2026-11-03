@@ -104,7 +104,7 @@ struct BrandProjectListView: View
                 .padding(.top, 8)
                 
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.Spacing.screen)
             .padding(.top, 16)
             .frame(maxWidth: .infinity)
         }

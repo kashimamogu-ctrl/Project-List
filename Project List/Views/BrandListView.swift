@@ -58,7 +58,7 @@ struct BrandListView: View
                     }
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.Spacing.screen)
             .padding(.top, 16)
             .frame(maxWidth: .infinity)
         }

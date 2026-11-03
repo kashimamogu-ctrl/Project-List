@@ -15,8 +15,8 @@ enum AppTheme
     // 進捗の色（背景・バー用と、バッジの文字用の濃い色）
     static let progress       = Color(hex: 0x5095A3)   // 進行中
     static let progressText   = Color(hex: 0x3A7480)
-    static let completed      = Color(hex: 0xD0A040)   // 完了
-    static let completedText  = Color(hex: 0x4F7A3D)
+    static let completed      = Color(hex: 0xD0A040)   // 完了(ゴールド)
+    static let completedText  = Color(hex: 0x8C6A1C)
     static let appliedText    = Color(hex: 0x6E6368)   // 応募済の文字
     static let text       = Color(hex: 0x433A3D)   // 本文
     static let subText    = Color(hex: 0x897D82)   // 補助文字

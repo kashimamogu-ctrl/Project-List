@@ -1,5 +1,3 @@
-//　TODO: トンマナ決める時にスペースやパディングなどの数値も定数化する？
-
 import SwiftUI
 import SwiftData
 
