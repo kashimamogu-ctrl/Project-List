@@ -24,7 +24,7 @@ struct CalendarView: View
     
     // ContentView から受け取る、タブを切り替えた回数
     let tabChangeCount: Int
-
+    
     init(tabChangeCount: Int = 0)
     {
         self.tabChangeCount = tabChangeCount
@@ -46,92 +46,100 @@ struct CalendarView: View
     {
         ZStack
         {
-            // カレンダーのメイン表示部分
-            VStack
+            ScrollView
             {
-                // ヘッダー
-                HStack
+                VStack(spacing: AppTheme.Spacing.section)
                 {
-                    // 上部左のボタン、前の月へ
-                    Button(action: { changeMonth(by: -1) })
+                    // カレンダーのメイン表示部分
+                    VStack
                     {
-                        Image(systemName: "chevron.left")
-                            .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
-                            .font(.body.weight(.medium))
-                            .foregroundColor(AppTheme.subText)
-                            .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
-                    }
-                    
-                    Spacer()
-                    
-                    HStack(alignment: .firstTextBaseline, spacing: 8)
-                    {
-                        Text("\(Calendar.current.component(.month, from: currentMonth))月")
-                            .font(.title.weight(.bold))
-                            .foregroundColor(AppTheme.main)
-
-                        Text(verbatim: "\(Calendar.current.component(.year, from: currentMonth))年")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundColor(AppTheme.text)
-                    }
-                    
-                    Spacer()
-                    
-                    // 上部右のボタン、次の月へ
-                    Button(action: { changeMonth(by: 1) })
-                    {
-                        Image(systemName: "chevron.right")
-                            .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
-                            .font(.body.weight(.medium))
-                            .foregroundColor(AppTheme.subText)
-                    }
-                }
-                .padding(.horizontal, 8)
-                
-                // カレンダー本体
-                VStack(spacing: 0)
-                {
-                    // 曜日表示ヘッダー
-                    HStack(spacing: 0) {
-                        ForEach(weekdays, id: \.self) { weekday in
-                            Text(weekday)
-                                .font(.caption.weight(.medium))
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppTheme.subText)
+                        // ヘッダー
+                        HStack
+                        {
+                            // 上部左のボタン、前の月へ
+                            Button(action: { changeMonth(by: -1) })
+                            {
+                                Image(systemName: "chevron.left")
+                                    .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
+                                    .font(.body.weight(.medium))
+                                    .foregroundColor(AppTheme.subText)
+                                    .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
+                            }
+                            
+                            Spacer()
+                            
+                            HStack(alignment: .firstTextBaseline, spacing: 8)
+                            {
+                                Text("\(Calendar.current.component(.month, from: currentMonth))月")
+                                    .font(.title.weight(.bold))
+                                    .foregroundColor(AppTheme.main)
+                                
+                                Text(verbatim: "\(Calendar.current.component(.year, from: currentMonth))年")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundColor(AppTheme.text)
+                            }
+                            
+                            Spacer()
+                            
+                            // 上部右のボタン、次の月へ
+                            Button(action: { changeMonth(by: 1) })
+                            {
+                                Image(systemName: "chevron.right")
+                                    .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
+                                    .font(.body.weight(.medium))
+                                    .foregroundColor(AppTheme.subText)
+                            }
                         }
-                    }
-                    .padding(.vertical, 8)
-                    
-                    AppDivider()
-                    
-                    // 7列グリッドで CalendarCellView を並べる
-                    // 42日分を7日ずつに分け、6週間分の行として表示
-                    VStack(spacing: 0)
-                    {
-                        ForEach(0..<6, id: \.self) { weekIndex in
-                            let startIndex = weekIndex * 7
-                            let weekDays = Array(
-                                calendarDays.dropFirst(startIndex).prefix(7)
-                            )
-
-                            CalendarWeekRowView(
-                                days: weekDays,
-                                projects: projects,
-                                onSelectDay: { day in
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        selectedDay = day
-                                    }
+                        .padding(.horizontal, 8)
+                        
+                        // カレンダー本体
+                        VStack(spacing: 0)
+                        {
+                            // 曜日表示ヘッダー
+                            HStack(spacing: 0) {
+                                ForEach(weekdays, id: \.self) { weekday in
+                                    Text(weekday)
+                                        .font(.caption.weight(.medium))
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundColor(AppTheme.subText)
                                 }
-                            )
+                            }
+                            .padding(.vertical, 8)
+                            
+                            AppDivider()
+                            
+                            // 7列グリッドで CalendarCellView を並べる
+                            // 42日分を7日ずつに分け、6週間分の行として表示
+                            VStack(spacing: 0)
+                            {
+                                ForEach(0..<6, id: \.self) { weekIndex in
+                                    let startIndex = weekIndex * 7
+                                    let weekDays = Array(
+                                        calendarDays.dropFirst(startIndex).prefix(7)
+                                    )
+                                    
+                                    CalendarWeekRowView(
+                                        days: weekDays,
+                                        projects: projects,
+                                        onSelectDay: { day in
+                                            withAnimation(.easeInOut(duration: 0.2)) {
+                                                selectedDay = day
+                                            }
+                                        }
+                                    )
+                                }
+                            }
                         }
+                        .cardStyle()
                     }
+                    // 〇〇月の残りの案件
+                    MonthTaskList(month: currentMonth, projects: projects)
                 }
-                .cardStyle()
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, AppTheme.Spacing.screen)
+                .padding(.top, 16)
+                .padding(.bottom, AppTheme.Spacing.section)
             }
-            .padding(.horizontal, AppTheme.Spacing.screen)
-            .padding(.top, 16)
-            // 画面いっぱいに広げて、背景の色を下まで届かせる（カレンダーは上に寄せる）
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             
             // 浮き上がるモーダル表示部分
             if let day = selectedDay
@@ -182,7 +190,7 @@ struct CalendarView: View
             currentMonth = newMonth
         }
     }
-
+    
     // カレンダー更新
     private func updateCalendarDays()
     {

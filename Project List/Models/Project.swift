@@ -170,6 +170,21 @@ final class Project
         }
     }
     
+    // 指定した月に、この案件の期間がかかっているか（期限なしは対象外）
+    func overlaps(month: Date) -> Bool
+    {
+        guard let deadline else { return false }
+
+        let calendar = Calendar.current
+        guard let monthInterval = calendar.dateInterval(of: .month, for: month) else { return false }
+
+        // 期間の案件は開始日から、単日の案件は期限の日だけ
+        let start = calendar.startOfDay(for: (isRange ? startline : nil) ?? deadline)
+
+        // 案件の期間と、その月の期間が重なっているか
+        return start < monthInterval.end && deadline >= monthInterval.start
+    }
+    
     init(name: String, brand: Brand? = nil, productName: String = "", status: ProjectStatus = .applied, projectType: ProjectType = .gifting, hasDuty: Bool = true, isRange:Bool = false, startline: Date? = nil, deadline: Date? = nil,note: String = "")
     {
            self.name = name
