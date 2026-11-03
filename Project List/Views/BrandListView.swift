@@ -25,7 +25,7 @@ struct BrandListView: View
                         
                         Text("案件一覧から新しいブランドを入力して案件を作成すると、ここに自動で追加されます。")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(AppTheme.subText)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 32)
                     }

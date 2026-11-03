@@ -32,15 +32,14 @@ struct BrandProjectListView: View
                 VStack(alignment: .leading, spacing: 12)
                 {
                     Text("ブランド情報")
-                        .font(.footnote)
-                        .bold()
-                        .foregroundColor(.gray)
+                        .font(.footnote.weight(.semibold))
+                        .foregroundColor(AppTheme.subText)
                         .padding(.horizontal, 4)
                     
                     VStack(spacing: 0)
                     {
                         infoRow(title: "ブランド名", value: brand.name, isBold: true)
-                        Divider().padding(.horizontal)
+                        AppDivider().padding(.horizontal)
                         infoRow(title: "ジャンル", value: brand.genre.label, isBold: false)
 
                         if !brand.note.isEmpty
@@ -50,9 +49,9 @@ struct BrandProjectListView: View
                             VStack(alignment: .leading, spacing: 4)
                             {
                                 Text("メモ")
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(AppTheme.subText)
                                 Text(brand.note)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(AppTheme.text)
                             }
                             .font(.subheadline)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -79,13 +78,11 @@ struct BrandProjectListView: View
                             Spacer()
                             Text("このブランドの案件はありません")
                                 .font(.subheadline)
-                                .foregroundColor(.gray)
-                                .italic()
+                                .foregroundColor(AppTheme.subText)
                             Spacer()
                         }
                         .padding()
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
+                        .cardStyle()
                     }
                     else
                     {
@@ -144,11 +141,11 @@ struct BrandProjectListView: View
         HStack
         {
             Text(title)
-                .foregroundColor(.secondary)
+                .foregroundColor(AppTheme.subText)
             Spacer()
             Text(value)
-                .bold(isBold)
-                .foregroundColor(.primary)
+                .fontWeight(isBold ? .medium : .regular)
+                .foregroundColor(AppTheme.text)
         }
         .padding()
         .font(.subheadline)

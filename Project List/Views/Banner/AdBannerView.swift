@@ -25,13 +25,14 @@ struct AdBannerView: View
         HStack
         {
             Spacer()
-            Text("広告エリア (50pt)")
-                .font(.caption)
-                .foregroundColor(.gray)
+            Text("広告エリア")
+                .font(.caption2)
+                .foregroundColor(AppTheme.subText)
             Spacer()
         }
         .frame(height: 50)
-        .background(Color.gray.opacity(0.1))
+        .background(AppTheme.background)
+        .overlay(alignment: .top) { AppDivider() }
     }
 }
 

@@ -14,10 +14,10 @@ struct CalendarCellView: View
         VStack(alignment: .leading, spacing: 2)
         {
             Text("\(dayNumber)")
-                .font(.system(size: 13, weight: isToday ? .bold : .regular))
+                .font(.system(size: 13, weight: isToday ? .semibold : .regular))
                 .foregroundColor(
                     isToday ? .white :
-                    isCurrentMonth ? .primary : .gray.opacity(0.4)
+                        isCurrentMonth ? AppTheme.text : AppTheme.subText.opacity(0.5)
                 )
                 .frame(width: 20, height: 20)
                 .background(isToday ? AppTheme.main : Color.clear)
@@ -27,8 +27,8 @@ struct CalendarCellView: View
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, minHeight: 78, alignment: .topLeading)
-        .background(Color(.systemBackground))
-        .border(Color.gray.opacity(0.25), width: 0.5)
+        .background(AppTheme.card)
+        .border(AppTheme.line, width: 0.5)
         .contentShape(Rectangle())
         .onTapGesture {
             onSelect()
@@ -86,8 +86,8 @@ struct CalendarWeekRowView: View
                     HStack(spacing: 0)
                     {
                         Text(bar.name)
-                            .font(.system(size: 9, weight: .bold))
-                            .foregroundColor(.primary.opacity(0.85))
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundColor(bar.status.textColor)
                             .lineLimit(1)
                             .truncationMode(.tail)
                             .padding(.leading, 4)
@@ -113,8 +113,7 @@ struct CalendarWeekRowView: View
                     if hiddenCount > 0
                     {
                         Text("+\(hiddenCount)")
-                            .font(.system(size: 9, weight: .bold))
-                            .foregroundColor(.gray)
+                            .font(.system(size: 9, weight: .medium)) .foregroundColor(AppTheme.subText)
                             .padding(.trailing, 4)
                             .frame(
                                 width: cellWidth - barSideInset * 2,

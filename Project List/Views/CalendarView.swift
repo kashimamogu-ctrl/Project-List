@@ -57,7 +57,9 @@ struct CalendarView: View
                     {
                         Image(systemName: "chevron.left")
                             .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
-                            .font(.body).bold().foregroundColor(.gray)
+                            .font(.body.weight(.medium))
+                            .foregroundColor(AppTheme.subText)
+                            .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
                     }
                     
                     Spacer()
@@ -93,14 +95,14 @@ struct CalendarView: View
                     HStack(spacing: 0) {
                         ForEach(weekdays, id: \.self) { weekday in
                             Text(weekday)
-                                .font(.caption).bold()
+                                .font(.caption.weight(.medium))
                                 .frame(maxWidth: .infinity)
                                 .foregroundColor(AppTheme.subText)
                         }
                     }
                     .padding(.vertical, 8)
                     
-                    Divider()
+                    AppDivider()
                     
                     // 7列グリッドで CalendarCellView を並べる
                     // 42日分を7日ずつに分け、6週間分の行として表示
@@ -124,10 +126,12 @@ struct CalendarView: View
                         }
                     }
                 }
-                .border(Color.primary, width: 0.5)
+                .cardStyle()
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.Spacing.screen)
             .padding(.top, 16)
+            // 画面いっぱいに広げて、背景の色を下まで届かせる（カレンダーは上に寄せる）
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             
             // 浮き上がるモーダル表示部分
             if let day = selectedDay

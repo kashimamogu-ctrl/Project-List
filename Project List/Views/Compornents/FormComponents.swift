@@ -321,3 +321,14 @@ extension View
             .background(AppTheme.background)
     }
 }
+
+// 細い区切り線（トンマナの線の色・太さ）
+struct AppDivider: View
+{
+    var body: some View
+    {
+        Rectangle()
+            .fill(AppTheme.line)
+            .frame(height: AppTheme.lineWidth)
+    }
+}
