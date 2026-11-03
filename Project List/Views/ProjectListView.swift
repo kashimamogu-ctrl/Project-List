@@ -44,6 +44,23 @@ struct ProjectListView: View
                 
                 VStack(spacing: 16)
                 {
+                    if filteredProjects.isEmpty
+                    {
+                        if projects.isEmpty
+                        {
+                            // 案件がまだ1件もないとき
+                            EmptyStateView(
+                                title: "まだ案件がありません",
+                                message: "右下の＋ボタンから、最初の案件を追加してみましょう"
+                            )
+                        }
+                        else
+                        {
+                            // 絞り込んだら0件になったとき
+                            EmptyStateView(title: "「\(selectedFilterStatus?.label ?? "")」の案件はありません")
+                        }
+                    }
+                    
                     ForEach(filteredProjects){ project in
                         ZStack
                         {

@@ -16,21 +16,11 @@ struct BrandListView: View
             {
                 if brands.isEmpty
                 {
-                    VStack(spacing: 8)
-                    {
-                        Text("ブランドがありません")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(AppTheme.subText)
-                        
-                        Text("案件一覧から新しいブランドを入力して案件を作成すると、ここに自動で追加されます。")
-                            .font(.caption)
-                            .foregroundColor(AppTheme.subText)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 32)
-                    }
-                    .padding(.top, 100)
-                    
+                    EmptyStateView(
+                        title: "ブランドがありません",
+                        message: "案件一覧から新しいブランドを入力して案件を作成すると、ここに自動で追加されます。"
+                    )
+                    .padding(.top, 60)
                 }
                 else
                 {

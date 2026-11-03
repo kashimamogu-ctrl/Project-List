@@ -44,6 +44,14 @@ struct CalendarTaskDetailModal: View
                {
                    VStack(spacing: 12)
                    {
+                       if filteredProjects.isEmpty
+                       {
+                           EmptyStateView(
+                               title: "この日の予定はありません",
+                               message: "右下の＋ボタンから追加できます"
+                           )
+                       }
+                       
                        // ↓ここから案件一覧
                        ForEach(filteredProjects) { project in
                            NavigationLink (value: project) {

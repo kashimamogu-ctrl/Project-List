@@ -152,3 +152,31 @@ struct DeadlineFields: View
         }
     }
 }
+
+// 何もないときの表示（タイトルと説明）
+struct EmptyStateView: View
+{
+    let title: String
+    var message: String? = nil
+
+    var body: some View
+    {
+        VStack(spacing: 8)
+        {
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(AppTheme.subText)
+
+            if let message
+            {
+                Text(message)
+                    .font(.caption)
+                    .foregroundColor(AppTheme.subText)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+        .padding(.horizontal, AppTheme.Spacing.screen)
+    }
+}

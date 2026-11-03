@@ -19,6 +19,9 @@ struct CalendarView: View
     // タップされた日付情報を保持
     @State private var selectedDay: CalendarDay?
     
+    // 1日1回の広告の管理
+    @State private var adGate = CalendarAdGate()
+    
     // 開始曜日の設定（1 = 日曜日, 2 = 月曜日）
     @AppStorage("firstWeekday") private var firstWeekday = 2 // 「１」なら日曜始まり
     
@@ -43,6 +46,45 @@ struct CalendarView: View
     }
     
     var body: some View
+    {
+        Group
+        {
+            switch adGate.state
+            {
+            case .offline:
+                // ネットにつながっていないときの案内
+                CalendarOfflineView {
+                    adGate.calendarDidOpen()
+                }
+
+            case .checking:
+                // 広告を読み込み中
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(AppTheme.background)
+
+            case .showingAd, .ready:
+                calendarContent
+            }
+        }
+        .navigationTitle("カレンダー")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            adGate.calendarDidOpen()
+        }
+        // 広告は画面全体を覆って表示する（タブバーも隠れる）
+        .fullScreenCover(isPresented: Binding(
+            get: { adGate.state == .showingAd },
+            set: { _ in }
+        )) {
+            DummyAdView {
+                adGate.adDidClose()
+            }
+        }
+    }
+
+    // カレンダー本体（今までの body）
+    private var calendarContent: some View
     {
         ZStack
         {
