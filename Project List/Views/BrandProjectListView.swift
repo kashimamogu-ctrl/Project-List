@@ -44,7 +44,7 @@ struct BrandProjectListView: View
 
                         if !brand.note.isEmpty
                         {
-                            Divider().padding(.horizontal)
+                            AppDivider().padding(.horizontal)
 
                             VStack(alignment: .leading, spacing: 4)
                             {
@@ -66,9 +66,7 @@ struct BrandProjectListView: View
                 VStack(alignment: .leading, spacing: 12)
                 {
                     Text("\(brand.name) の案件")
-                        .font(.footnote)
-                        .bold()
-                        .foregroundColor(.gray)
+                        .font(.footnote.weight(.semibold)) .foregroundColor(AppTheme.subText)
                         .padding(.horizontal, 4)
                     
                     if brand.projects.isEmpty

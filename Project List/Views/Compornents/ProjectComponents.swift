@@ -72,15 +72,15 @@ struct ProjectCardContent: View
 
             Text(project.name)
                 .font(.body)
-                .bold()
-                .foregroundColor(.primary)
+                .fontWeight(.semibold)
+                .foregroundColor(AppTheme.text)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             if !project.productName.isEmpty
             {
                 Text("商品: \(project.productName)")
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.subText)
                     .padding(.top, 4)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

@@ -63,13 +63,7 @@ struct CalendarTaskDetailModal: View
                                    Spacer()
                                    
                                    // ステータスバッジなどの表示
-                                   Text(project.status.label)
-                                       .font(.caption2)
-                                       .padding(.horizontal, 8)
-                                       .padding(.vertical, 4)
-                                       .background(project.status.backgroundColor)
-                                       .foregroundColor(project.status.foregroundColor)
-                                       .cornerRadius(4)
+                                   StatusBadge(status: project.status)
                                }
                                .padding()
                                .background(AppTheme.background)
@@ -100,11 +94,7 @@ struct CalendarTaskDetailModal: View
         // 新規作成カスタムポップアップ
         if isShowingSheet
         {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    withAnimation { isShowingSheet = false }
-                }
+            ModalBackdrop { withAnimation { isShowingSheet = false } }
             
             AddProjectView(isPresented: $isShowingSheet, initialDate: day.date)
                 .padding(.horizontal, 24)

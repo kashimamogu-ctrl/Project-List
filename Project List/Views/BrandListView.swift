@@ -58,7 +58,7 @@ struct BrandListView: View
                                 
                                 Image(systemName: "chevron.right")
                                     .font(.footnote)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(AppTheme.subText)
                             }
                             .padding()
                             .padding()

@@ -74,7 +74,7 @@ struct ProjectListView: View
                                     {
                                         Image(systemName: selectedProjectIDs.contains(project.id) ? "checkmark.circle.fill" : "circle")
                                             .font(.title2)
-                                            .foregroundColor(selectedProjectIDs.contains(project.id) ? .red : .gray)
+                                            .foregroundColor(selectedProjectIDs.contains(project.id) ? .red : AppTheme.subText)
                                             .frame(width: 44, height: 44)
                                     }
                                     .buttonStyle(.borderless)

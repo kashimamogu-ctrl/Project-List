@@ -44,7 +44,7 @@ struct BrandEditView: View
                     {
                         Text("同じ名前のブランドがあります")
                             .font(.caption)
-                            .foregroundColor(.red)
+                            .foregroundColor(AppTheme.accent)
                     }
                 }
 

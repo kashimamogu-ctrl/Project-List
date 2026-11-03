@@ -199,7 +199,7 @@ struct ProjectDetailView: View
                     Button("保存") {
                         updateProject()
                     }
-                    .bold()
+                    .fontWeight(.medium)
                     .disabled(!isValid)
                 } else {
                     Button("編集") {
