@@ -39,8 +39,7 @@ struct ContentView: View
                     BrandListView()
                 }
                 .tabItem {
-                    Image(systemName: "tag.fill")
-                    Text("ブランド")
+                    Label("ブランド", systemImage: "tag")
                 }
                 .tag(2)
                 
@@ -49,21 +48,13 @@ struct ContentView: View
                     MyPageView()
                 }
                 .tabItem {
-                    Label("マイページ", systemImage: "person.fill")
+                    Label("マイページ", systemImage: "person")
                 }
                 .tag(3)
             }
             .onChange(of: selectedTab)
             {
                 tabChangeCount += 1 // カレンダーで開いていた詳細画面を閉じる
-            }
-            .onAppear {
-                let appearance = UITabBarAppearance()
-                appearance.configureWithDefaultBackground()
-                
-                appearance.backgroundColor = UIColor.systemGray6
-                UITabBar.appearance().scrollEdgeAppearance = appearance
-                UITabBar.appearance().standardAppearance = appearance
             }
             AdBannerView()
         }

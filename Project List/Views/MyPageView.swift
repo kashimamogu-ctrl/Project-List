@@ -22,10 +22,6 @@ struct MyPageView: View
         {
             VStack(alignment: .leading, spacing: 26)
             {
-                Text("マイページ")
-                    .font(.title2)
-                    .bold()
-                
                 VStack(spacing: 12)
                 {
                     menuRow("アプリの使い方")
@@ -93,9 +89,8 @@ struct MyPageView: View
                     ))
                     .scrollContentBackground(.hidden)
                     .frame(minHeight: 140)
-                    .padding(8)
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.vertical, 4)
+                    .appInputStyle()
                 }
             }
         }
@@ -130,6 +125,8 @@ struct MyPageView: View
         {
             ProfileEditView(profile: profile)
         }
+        .navigationTitle("マイページ")
+        .background(AppTheme.background)
     }
 
     private func menuRow(_ title: String) -> some View

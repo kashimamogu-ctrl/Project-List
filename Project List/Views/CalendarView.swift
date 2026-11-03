@@ -37,7 +37,7 @@ struct CalendarView: View
     // 曜日の一覧
     private var weekdays: [String]
     {
-        let base = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+        let base = ["日", "月", "火", "水", "木", "金", "土"]
         let shift = firstWeekday - 1
         return Array(base[shift...] + base[..<shift])
     }
@@ -56,6 +56,7 @@ struct CalendarView: View
                     Button(action: { changeMonth(by: -1) })
                     {
                         Image(systemName: "chevron.left")
+                            .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
                             .font(.body).bold().foregroundColor(.gray)
                     }
                     
@@ -64,12 +65,12 @@ struct CalendarView: View
                     HStack(alignment: .firstTextBaseline, spacing: 8)
                     {
                         Text("\(Calendar.current.component(.month, from: currentMonth))月")
-                            .font(.title)
-                            .bold()
+                            .font(.title.weight(.bold))
+                            .foregroundColor(AppTheme.main)
 
                         Text(verbatim: "\(Calendar.current.component(.year, from: currentMonth))年")
-                            .font(.headline)
-                            .bold()
+                            .font(.subheadline.weight(.medium))
+                            .foregroundColor(AppTheme.text)
                     }
                     
                     Spacer()
@@ -78,7 +79,9 @@ struct CalendarView: View
                     Button(action: { changeMonth(by: 1) })
                     {
                         Image(systemName: "chevron.right")
-                            .font(.body).bold().foregroundColor(.gray)
+                            .frame(width: AppTheme.Size.tapTarget, height: AppTheme.Size.tapTarget)
+                            .font(.body.weight(.medium))
+                            .foregroundColor(AppTheme.subText)
                     }
                 }
                 .padding(.horizontal, 8)
@@ -92,7 +95,7 @@ struct CalendarView: View
                             Text(weekday)
                                 .font(.caption).bold()
                                 .frame(maxWidth: .infinity)
-                                .foregroundColor(.primary)
+                                .foregroundColor(AppTheme.subText)
                         }
                     }
                     .padding(.vertical, 8)
@@ -152,6 +155,7 @@ struct CalendarView: View
         { project in
             ProjectDetailView(project: project)
         }
+        .background(AppTheme.background)
         .navigationTitle("カレンダー")
         .navigationBarTitleDisplayMode(.inline)
         .animation(.easeInOut(duration: 0.2), value: selectedDay)

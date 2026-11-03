@@ -20,7 +20,7 @@ struct CalendarCellView: View
                     isCurrentMonth ? .primary : .gray.opacity(0.4)
                 )
                 .frame(width: 20, height: 20)
-                .background(isToday ? Color.blue : Color.clear)
+                .background(isToday ? AppTheme.main : Color.clear)
                 .clipShape(Circle())
                 .padding([.top, .leading], 3)
 
