@@ -78,7 +78,7 @@ struct AddProjectView: View
                 }
             }
             .padding()
-            .background(Color(.systemGray6))
+            .background(AppTheme.surface)
             
             // 入力フォーム
             ScrollView
@@ -209,9 +209,7 @@ struct AddProjectView: View
                 .padding()
             }
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 5)
+        .modalCardStyle()
     }
     
     // 保存ロジック

@@ -151,11 +151,9 @@ struct ProjectListView: View
             // 新規作成カスタムポップアップ
             if isShowingSheet
             {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation { isShowingSheet = false }
-                    }
+                ModalBackdrop {
+                    withAnimation { isShowingSheet = false }
+                }
                 
                 AddProjectView(isPresented: $isShowingSheet)
                     .padding(.horizontal, 24)
@@ -173,18 +171,16 @@ struct ProjectListView: View
             isShowingSheet = false
         }
         // 一括削除のアラートポップアップ
-        .alert("案件の削除", isPresented: $isShowingDeleteAlert) {
-            Button("キャンセル", role: .cancel) {}
-            Button("削除する", role: .destructive)
+        .deleteAlert(
+            "案件の削除",
+            isPresented: $isShowingDeleteAlert,
+            message: "選択された \(selectedProjectIDs.count) 件の案件を完全に削除しますか？"
+        ) {
+            withAnimation
             {
-                withAnimation
-                {
-                    viewModel.deleteMultipleProjects(ids: selectedProjectIDs, from: projects, in: modelContext)
-                    isEditMode = false
-                }
+                viewModel.deleteMultipleProjects(ids: selectedProjectIDs, from: projects, in: modelContext)
+                isEditMode = false
             }
-        } message: {
-            Text("選択された \(selectedProjectIDs.count) 件の案件を完全に削除しますか？")
         }
     }
     

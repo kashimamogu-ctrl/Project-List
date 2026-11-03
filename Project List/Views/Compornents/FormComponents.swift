@@ -189,6 +189,32 @@ struct FloatingAddButton: View
     }
 }
 
+// 削除ボタン（白いカードに赤い文字）
+struct DeleteButton: View
+{
+    let title: String
+    let action: () -> Void
+
+    var body: some View
+    {
+        Button(role: .destructive, action: action)
+        {
+            HStack
+            {
+                Spacer()
+                Image(systemName: "trash")
+                Text(title)
+                Spacer()
+            }
+            .font(.appButton)
+            .foregroundColor(.red)
+            .frame(minHeight: AppTheme.Size.control)
+            .cardStyle()
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 // 絞り込みのチップ（すべて・応募済…）
 struct FilterChip: View
 {

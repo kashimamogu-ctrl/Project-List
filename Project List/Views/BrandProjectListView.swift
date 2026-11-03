@@ -12,6 +12,16 @@ struct BrandProjectListView: View
     @State private var isShowingDeleteAlert = false
     @State private var isShowingEditSheet = false
     
+    // 削除アラートのメッセージ（案件が紐づいているかで変える）
+    private var deleteMessage: String
+    {
+        if brand.projects.isEmpty
+        {
+            return "ブランド「\(brand.name)」を完全に削除しますか？"
+        }
+        return "警告：ブランド「\(brand.name)」には \(brand.projects.count) 件の案件が紐づいています。\n\nこのブランドを削除すると、中の案件もすべて一緒に完全に消去されますが、本当によろしいですか？"
+    }
+    
     var body: some View
     {
         ScrollView
@@ -93,24 +103,9 @@ struct BrandProjectListView: View
                 }
                 
                 // 一番下の個別削除ボタン
-                Button(role: .destructive)
-                {
+                DeleteButton(title: "このブランドを削除する") {
                     isShowingDeleteAlert = true
-                } label: {
-                    HStack
-                    {
-                        Spacer()
-                        Image(systemName: "trash")
-                        Text("このブランドを削除する")
-                        Spacer()
-                    }
-                    .font(.body)
-                    .bold()
-                    .foregroundColor(.red)
-                    .padding()
-                    .cardStyle()
                 }
-                .buttonStyle(.plain)
                 .padding(.top, 8)
                 
             }
@@ -129,28 +124,16 @@ struct BrandProjectListView: View
         .sheet(isPresented: $isShowingEditSheet) {
             BrandEditView(brand: brand)
         }
-        .alert("ブランドの削除", isPresented: $isShowingDeleteAlert)
-        {
-            Button("キャンセル", role: .cancel) {}
-            Button("削除する", role: .destructive)
+        .deleteAlert(
+            "ブランドの削除",
+            isPresented: $isShowingDeleteAlert,
+            message: deleteMessage
+        ) {
+            withAnimation
             {
-                withAnimation
-                {
-                    modelContext.delete(brand)
-                    try? modelContext.save() //TODO：手動で無理やり削除っぽいので設計的に大丈夫か確認
-                    dismiss()
-                }
-            }
-        }
-        message:
-        {
-            if brand.projects.isEmpty
-            {
-                Text("ブランド「\(brand.name)」を完全に削除しますか？")
-            }
-            else
-            {
-                Text("警告：ブランド「\(brand.name)」には \(brand.projects.count) 件の案件が紐づいています。\n\nこのブランドを削除すると、中の案件もすべて一緒に完全に消去されますが、本当によろしいですか？")
+                modelContext.delete(brand)
+                try? modelContext.save() //TODO：手動で無理やり削除っぽいので設計的に大丈夫か確認
+                dismiss()
             }
         }
     }

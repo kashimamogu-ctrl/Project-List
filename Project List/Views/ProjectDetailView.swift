@@ -181,9 +181,12 @@ struct ProjectDetailView: View
                 }
                 
                 Section {
-                    Button(role: .destructive) { isShowingDeleteAlert = true } label: {
-                        HStack { Spacer(); Image(systemName: "trash"); Text("この案件を削除する"); Spacer() }
+                    DeleteButton(title: "この案件を削除する") {
+                        isShowingDeleteAlert = true
                     }
+                    // Form の行の白い背景と余白を消して、カードだけを見せる
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
                 }
             }
         }
@@ -212,14 +215,13 @@ struct ProjectDetailView: View
             }
         }
         .navigationBarBackButtonHidden(isEditMode)
-        .alert("案件の削除", isPresented: $isShowingDeleteAlert) {
-            Button("キャンセル", role: .cancel) {}
-            Button("削除する", role: .destructive) {
-                modelContext.delete(project)
-                dismiss()
-            }
-        } message: {
-            Text("この案件データを完全に削除しますか？")
+        .deleteAlert(
+            "案件の削除",
+            isPresented: $isShowingDeleteAlert,
+            message: "この案件データを完全に削除しますか？"
+        ) {
+            modelContext.delete(project)
+            dismiss()
         }
     }
     

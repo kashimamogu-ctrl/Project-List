@@ -30,19 +30,15 @@ struct CalendarTaskDetailModal: View
                 HStack
                 {
                     Text("\(day.date.shortDateText) の予定")
-                    
+                        .font(.appSection)
+
                     Spacer()
-                    
-                    // 閉じるボタン
-                    Button(action: onClose)
-                    {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
-                            .foregroundColor(.gray.opacity(0.6))
-                    }
+
+                    ModalCloseButton(action: onClose)
                 }
-                .padding()
-                .background(Color(.systemGray6))
+                .padding(.leading)
+                .padding(.vertical, 4)
+                .background(AppTheme.surface)
                 
                 ScrollView
                {
@@ -76,8 +72,8 @@ struct CalendarTaskDetailModal: View
                                        .cornerRadius(4)
                                }
                                .padding()
-                               .background(Color(.systemGray6))
-                               .cornerRadius(10)
+                               .background(AppTheme.background)
+                               .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.control))
                                .contentShape(Rectangle())
                            }
                            .buttonStyle(.plain)
@@ -87,9 +83,7 @@ struct CalendarTaskDetailModal: View
                 .padding()
                 .frame(maxHeight: 200)
             }
-            .background(Color(.systemBackground))
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+            .modalCardStyle()
             .padding(.horizontal, 24)
             
             // 新規案件作成用＋ボタン

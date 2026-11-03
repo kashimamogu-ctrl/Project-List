@@ -133,13 +133,11 @@ struct CalendarView: View
             if let day = selectedDay
             {
                 // 暗い背景（タップすると閉じる）
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation(.easeOut(duration: 0.2)) {
-                            selectedDay = nil
-                        }
+                ModalBackdrop {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        selectedDay = nil
                     }
+                }
                 
                 // ふわっと浮き出るダイアログ
                 CalendarTaskDetailModal(day: day) {
